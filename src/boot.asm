@@ -3,12 +3,12 @@
 DISK_LOAD_DL equ 80h ; specifies first disk, e0h means first CD/DVD, 0h is first floppy disk
 KERNEL_POSITION equ 0x1000
 ;End constants
-xor cs, cs
-mov ds, cs
-mov ss, cs
-mov es, cs
-mov fs, cs
-mov gs, cs
+xor ax, ax ; you can't set cs to 0
+mov ds, ax
+mov ss, ax
+mov es, ax
+mov fs, ax
+mov gs, ax
 ; reset all our segmentation registers. some morbords will do this but some leave them dirty.
 
 ; we can get straight to loading the kernel at this point.
@@ -54,6 +54,10 @@ GDT_START:
 GDT_END:
 ;End GDT
 ;End data
+
+; send help idk what im doing with all this gdt stuff but this isn't bootable (no way??)
+times 510-($-$$) db 0
+dw 0xAA55              
 
 
 
