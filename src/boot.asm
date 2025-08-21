@@ -1,5 +1,7 @@
 [org 0x7c00]
 
+%include "src/const.asm"
+
 .start:
     xor ax, ax
     mov ds, ax
