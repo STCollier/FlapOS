@@ -1,4 +1,5 @@
 #include "font.h"
+#include "graphics.h"
 
 static const uint8_t FONT[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)

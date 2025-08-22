@@ -1,10 +1,11 @@
 #include "util.h"
 #include "font.h"
-
-uint8_t* VGA;
+#include "graphics.h"
 
 void kmain(void) {
     VGA = (uint8_t*) 0xA0000;
+
+    VGA_setPalette(); // test set palette index 0x1 as red instead of default BIOS blue
 
     memset(VGA, 0x1, 320 * 200);
 
