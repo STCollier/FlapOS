@@ -57,3 +57,5 @@ dkms.conf
 bin
 .vscode
 .DS_Store
+
+memdump
