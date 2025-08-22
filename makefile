@@ -24,11 +24,21 @@ qemu:
 endif
 
 ifeq ($(UNAME_S),Darwin)
-boot:
-	@# putting everything in the initial make target allows you just to run `make` to compile and emulate
-	mkdir -p ./bin
+main: clean bootloader kernel run
+
+bootloader:
+	mkdir -p ./bin 
 	nasm -f bin src/boot/boot.asm -o bin/bootloader.bin
-	qemu-system-x86_64 -drive format=raw,file=bin/bootloader.bin
+
+kernel:
+	x86_64-elf-gcc -m32 -c src/kernel/kernel.c -o ./bin/kernel.c.o
+	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
+	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o ./bin/kernel.c.o --oformat binary
+
+run:
+	cat ./bin/bootloader.bin ./bin/kernel.bin > ./bin/os.bin
+	qemu-system-x86_64 -drive format=raw,file=./bin/os.bin  -qmp unix:./qmp-sock,server,wait=off -d guest_errors,cpu_reset
+	
 
 clean:
 	rm -rf ./bin
