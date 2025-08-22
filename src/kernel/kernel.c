@@ -1,14 +1,12 @@
+#include "util.h"
+#include "font.h"
+
+uint8_t* VGA;
+
 void kmain(void) {
-    unsigned char *vga = (unsigned char*) 0xA0000;
+    VGA = (uint8_t*) 0xA0000;
 
-    unsigned int rainbow[6] = {4,6,14,2,9,5};
-    int i = 0;
-    for (int x = 0; x < 320; x++) {
-        for (int y = 0; y < 200; y++) {
-            unsigned int color = rainbow[i++ % (sizeof(rainbow) / 4)];
-            vga[y * 320 + x] = color;
-        }
-    }
+    memset(VGA, 0x1, 320 * 200);
 
-    while (1);
+    prints("Hello World!", 8, 8);
 }

@@ -5,7 +5,8 @@ LD=i386-elf-ld
 ifeq ($(UNAME_S),Linux)
 # you do you
 # LOL ok
-CFLAGS= -ffreestanding -g -Wall -Wextra -fno-exceptions -m32 
+CFLAGS= -ffreestanding -g -Wall -Wextra -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector fno-builtin-function -fno-builtin
+
 main: start bootloader kernel concat qemu
 start:
 	rm -rf ./bin
@@ -14,8 +15,10 @@ bootloader:
 	nasm -f bin src/boot/boot.asm -o bin/bootloader.bin
 kernel:
 	$(CC) $(CFLAGS) -c src/kernel/kernel.c -o ./bin/kernel.c.o
+	$(CC) $(CFLAGS) -c src/kernel/font.c -o ./bin/font.c.o
+
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
-	$(LD) --oformat binary -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o ./bin/kernel.c.o
+	$(LD) --oformat binary -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o ./bin/kernel.c.o ./bin/font.c.o
 concat:
 	cat ./bin/bootloader.bin ./bin/kernel.bin > ./bin/os.bin
 qemu:
@@ -27,13 +30,15 @@ ifeq ($(UNAME_S),Darwin)
 main: clean bootloader kernel run
 
 bootloader:
-	mkdir -p ./bin 
+	mkdir -p bin
 	nasm -f bin src/boot/boot.asm -o bin/bootloader.bin
 
 kernel:
-	x86_64-elf-gcc -m32 -c src/kernel/kernel.c -o ./bin/kernel.c.o
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/kernel.c -o ./bin/kernel.c.o
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/font.c -o ./bin/font.c.o
+
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
-	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o ./bin/kernel.c.o --oformat binary
+	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o ./bin/kernel.c.o ./bin/font.c.o --oformat binary
 
 run:
 	cat ./bin/bootloader.bin ./bin/kernel.bin > ./bin/os.bin
