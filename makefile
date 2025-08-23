@@ -3,9 +3,7 @@ CC=i386-elf-gcc
 LD=i386-elf-ld
 
 ifeq ($(UNAME_S),Linux)
-# you do you
-# LOL ok
-CFLAGS= -ffreestanding -g -Wall -Wextra -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector fno-builtin-function -fno-builtin
+CFLAGS= -ffreestanding -g -Wall -Wextra -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector -fno-builtin-function -fno-builtin
 
 main: start bootloader kernel concat qemu
 start:
@@ -17,12 +15,13 @@ kernel:
 	$(CC) $(CFLAGS) -c src/kernel/kernel.c -o ./bin/kernel.c.o
 	$(CC) $(CFLAGS) -c src/kernel/font.c -o ./bin/font.c.o
 	$(CC) $(CFLAGS) -c src/kernel/graphics.c -o ./bin/graphics.c.o
-
+	$(CC) $(CFLAGS) -c src/kernel/idt.c -o ./bin/idt.c.o
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 	$(LD) --oformat binary -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o \
-		./bin/kernel.c.o   \
 		./bin/font.c.o     \
 		./bin/graphics.c.o \
+		./bin/idt.c.o \
+		./bin/kernel.c.o   
 concat:
 	cat ./bin/bootloader.bin ./bin/kernel.bin > ./bin/os.bin
 qemu:

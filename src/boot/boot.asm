@@ -84,7 +84,7 @@ gdt_descriptor:
 
 DL_AT_BOOT:     db 0
 KERNEL_POSITION equ 0x1000
-KERNEL_SIZE     equ 3
+KERNEL_SIZE     equ 63
 STACK_END:      equ 0x10000
 
 times 510-($-$$) db 0

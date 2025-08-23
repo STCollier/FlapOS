@@ -5,6 +5,7 @@
 
 __attribute__((noreturn))
 void exception_handler() {
+    prints("error?!?!",10,10);
     __asm__ volatile ("cli; hlt"); // Completely hangs the computer
 }
 
