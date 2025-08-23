@@ -6,7 +6,7 @@
 #define uint32_t unsigned int
 #define uint64_t unsigned long
 typedef uint32_t size_t;
-
+typedef uint32_t uintptr_t;
 #define true 1
 #define false 0
 

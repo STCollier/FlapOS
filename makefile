@@ -41,12 +41,14 @@ kernel:
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/kernel.c -o ./bin/kernel.c.o
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/font.c -o ./bin/font.c.o
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/graphics.c -o ./bin/graphics.c.o
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/idt.c -o ./bin/idt.c.o
 
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o \
 		./bin/kernel.c.o   \
 		./bin/font.c.o     \
 		./bin/graphics.c.o \
+		./bin/idt.c.o \
 		--oformat binary
 
 run:
