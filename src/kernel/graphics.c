@@ -1,5 +1,6 @@
 #include "graphics.h"
-
+#include "font.h"
+#include <stdarg.h> // yeah i dont know either
 /*
 See: https://wiki.osdev.org/VGA_Hardware#Port_0x3C8
 
@@ -27,4 +28,86 @@ void VGA_setPalette() {
     // We can either generate a palette with a loop, or select certain colors that pertain to the art we want
 
     VGA_setColor(0x1, 63, 0, 0);
+}
+size_t KPRINTF_CURRENT_X = 0;
+size_t KPRINTF_CURRENT_Y = 0;
+bool   FILLED_SCREEN = false;
+static void checkwrapping() {
+    if (KPRINTF_CURRENT_X == 40) {
+        KPRINTF_CURRENT_X=0;
+        KPRINTF_CURRENT_Y++;
+    }
+    if (KPRINTF_CURRENT_Y==20){
+        FILLED_SCREEN=true;
+        KPRINTF_CURRENT_Y=0;
+    }
+}
+bool kprintf(char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    bool in_specifier = false;
+    for (int i = 0; *(format+i); i++) {
+        char current = *(format+i);
+        if (in_specifier) {
+            switch(current) {
+                case 'c':
+                   uint32_t let = va_arg(args, uint32_t); // idk why but it gets really angry if its not a u32 passed in.
+                   // id have to guess its some weirdness with the fact that im passing in stdarg.h from my linux system into a baremetal os but what do i know
+                   kprintc((uint8_t)let, KPRINTF_CURRENT_X*8, KPRINTF_CURRENT_Y*10);
+                   KPRINTF_CURRENT_X++;
+                   checkwrapping();
+                   break;
+                case 's':
+                    char *ptr = va_arg(args,char*);
+                    for(int j =  0; *(ptr+j);j++) {
+                        if (*(ptr+j)=='\n'){
+                            KPRINTF_CURRENT_Y++;
+                            KPRINTF_CURRENT_X=0;
+                            checkwrapping(); // filled screen check
+                            continue;
+                        }
+                        kprintc(*(ptr+j), KPRINTF_CURRENT_X*8, KPRINTF_CURRENT_Y*10);
+                        KPRINTF_CURRENT_X++;
+                        checkwrapping();
+                    }
+                    break;
+                case 'x':
+                    char *hexval = "0123456789ABCDEF";
+                    uint32_t num  = va_arg(args,uint32_t);
+                    for(int sh = 32/4 - 1; sh >= 0; sh--) {
+                        char let = hexval[(num>>(sh*4))&0b1111];
+                        kprintc(let,KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+                        KPRINTF_CURRENT_X++;
+                        checkwrapping();
+                    }
+                    break;
+            }
+            in_specifier = false;
+            continue;
+        }
+        else if (current == '%') {
+            in_specifier = true;
+            if (*(format+i+1)== '\0'){
+                kprintc('%',KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+                KPRINTF_CURRENT_X++;
+                checkwrapping();
+            }
+            continue;
+        }
+        else if (current == '\n') {
+            KPRINTF_CURRENT_Y++;
+            KPRINTF_CURRENT_X=0;
+            checkwrapping(); // filled screen check
+            
+        }
+        else {
+            kprintc(current,KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+            KPRINTF_CURRENT_X++;
+            checkwrapping();
+            
+        }
+    }
+    va_end(args);
+    return FILLED_SCREEN;
 }

@@ -9,6 +9,7 @@ typedef uint32_t size_t;
 typedef uint32_t uintptr_t;
 #define true 1
 #define false 0
+#define bool uint8_t
 
 static inline void *memset(void *s, int c, size_t n) {
 	const unsigned char uc = c;

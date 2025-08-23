@@ -5,18 +5,27 @@
 
 __attribute__((noreturn))
 void exception_handler() {
-    prints("error?!?!",10,10);
+    VGA = (uint8_t*) 0xA0000;
+    memset(VGA, 0x4, 320 * 200);
+    kprints_nowrap("Exception triggered!", 8, 8);
     __asm__ volatile ("cli; hlt"); // Completely hangs the computer
 }
 
 void kmain(void) {
-    idt_init();
+    //idt_init();
 
     VGA = (uint8_t*) 0xA0000;
-
     //VGA_setPalette(); // test set palette index 0x1 as red instead of default BIOS blue
 
     memset(VGA, 0x1, 320 * 200);
+    
+    kprintf("Hello Test\n");
+    kprintf("%s","linewraplinewraplinewraplinewraplinewraplinewraplinewraplinewraplinewraplinewraplinewrap");
+    kprintf("0x50+0x90=%x\n",0x50+0x90);
+    kprintf("String test: %s\n","passed\n");
+    kprintf("%cello world%s",'H',"\n");
+    kprintf("pancake is the best amirite");
+    // issue: we should output to a serial port and capture the output in qemu so we dont lose data when the screen is filled.
+    while(1);
 
-    prints("Hello World!", 8, 8);
 }

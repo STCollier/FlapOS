@@ -131,8 +131,7 @@ static const uint8_t FONT[128][8] = {
     { 0x6E, 0x3B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+007E (~)
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
-
-void printc(char c, size_t x, size_t y) {
+void kprintc(char c, size_t x, size_t y) {
     const unsigned char *glyph = FONT[(size_t) c];
 
     for (size_t yy = 0; yy < 8; yy++) {
@@ -144,10 +143,10 @@ void printc(char c, size_t x, size_t y) {
     }
 }
 
-void prints(char* str, size_t x, size_t y) {
+void kprints_nowrap(char* str, size_t x, size_t y) {
     size_t s = 0, ss = 0;
     while(*str) {
         if (*str == 10) ss++, s = -1;
-        printc(*str++, x + s++*8, y + ss*10);
+        kprintc(*str++, x + s++*8, y + ss*10);
     }
 }

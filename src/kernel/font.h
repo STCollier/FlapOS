@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-void printc(char c, size_t x, size_t y);
-void prints(char* str, size_t x, size_t y);
+void kprintc(char c, size_t x, size_t y);
+void kprints_nowrap(char* str, size_t x, size_t y);
 
 #endif

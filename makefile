@@ -3,7 +3,7 @@ CC=i386-elf-gcc
 LD=i386-elf-ld
 
 ifeq ($(UNAME_S),Linux)
-CFLAGS= -ffreestanding -g -Wall -Wextra -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector -fno-builtin-function -fno-builtin
+CFLAGS= -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -g -Wall -Wextra -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector -fno-builtin-function -fno-builtin
 
 main: start bootloader kernel concat qemu
 start:
