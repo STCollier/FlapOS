@@ -42,6 +42,39 @@ static void checkwrapping() {
         KPRINTF_CURRENT_Y=0;
     }
 }
+char* kitoa(int num, char* str, int base)
+{
+    int i = 0;
+    bool neg = false;
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+    if (num < 0 && base == 10) {
+        neg = true;
+        num = -num;
+    }
+
+    while (num != 0) {
+        int rem = num % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        num = num / base;
+    }
+    if (neg)
+        str[i++] = '-';
+    str[i] = '\0';
+    int start = 0;
+    int end = i - 1;
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        end--;
+        start++;
+    }
+    return str;
+}
 bool kprintf(char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -81,6 +114,18 @@ bool kprintf(char *format, ...) {
                         KPRINTF_CURRENT_X++;
                         checkwrapping();
                     }
+                    break;
+                case 'd':
+                    int n = va_arg(args,int);
+                    char out[20];
+                    kitoa(n,out,10);
+                    
+                    for(int j=0;out[j]!=0;j++) {
+                        kprintc(out[j],KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+                        KPRINTF_CURRENT_X++;
+                        checkwrapping();
+                    }
+
                     break;
             }
             in_specifier = false;
