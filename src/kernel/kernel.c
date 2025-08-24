@@ -1,13 +1,11 @@
 #include "util.h"
-#include "font.h"
-#include "graphics.h"
 #include "idt.h"
-
+#include "vga.h"
 __attribute__((noreturn))
 void exception_handler() {
     VGA = (uint8_t*) 0xA0000;
     memset(VGA, 0x4, 320 * 200);
-    kprints_nowrap("Exception triggered!", 8, 8);
+    kprints("Exception triggered!", 8, 8);
     __asm__ volatile ("cli; hlt"); // Completely hangs the computer
 }
 
