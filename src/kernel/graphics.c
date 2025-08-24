@@ -75,9 +75,7 @@ char* kitoa(int num, char* str, int base)
     }
     return str;
 }
-bool kprintf(char *format, ...) {
-    va_list args;
-    va_start(args, format);
+bool _kprintf_valist(char *format, va_list args) {
     
     bool in_specifier = false;
     for (int i = 0; *(format+i); i++) {
@@ -110,7 +108,7 @@ bool kprintf(char *format, ...) {
                     uint32_t num  = va_arg(args,uint32_t);
                     for(int sh = 32/4 - 1; sh >= 0; sh--) {
                         char let = hexval[(num>>(sh*4))&0b1111];
-                        kprintc(let,KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+                         va_end(args);   kprintc(let,KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
                         KPRINTF_CURRENT_X++;
                         checkwrapping();
                     }
@@ -153,6 +151,41 @@ bool kprintf(char *format, ...) {
             
         }
     }
-    va_end(args);
     return FILLED_SCREEN;
+}
+bool kprintf(char *format, ...) {
+    va_list args;
+    va_start(args,format);
+    bool ret = _kprintf_valist(format,args);
+    va_end(args);
+    return ret;
+}
+
+bool klog(char *format, ...) {
+    char *mutable = format;
+    
+    while (*mutable){mutable++;}
+    uint32_t len = mutable - format;
+    char msg[6+len+1+1]; // "[KNL] " + length + \n + \0
+    
+    msg[0]='[';
+    msg[1]='K';
+    msg[2]='N';
+    msg[3]='L';
+    msg[4]=']';
+    msg[5]=' ';
+    mutable = format;
+    int i = 0;
+    while (*mutable) {
+        msg[6+i] = *mutable;
+        mutable++;
+        i++;
+    } 
+    msg[6+len] = '\n';
+    msg[6+len+1] = '\0';
+    va_list args;
+    va_start(args, format);
+    bool ret = _kprintf_valist(msg,args);
+    va_end(args);
+    return ret;
 }
