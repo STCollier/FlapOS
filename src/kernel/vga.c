@@ -132,25 +132,7 @@ static const uint8_t FONT[128][8] = {
     { 0x6E, 0x3B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+007E (~)
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}    // U+007F
 };
-void kprintc_noprintf(char c, size_t x, size_t y) {
-    const unsigned char *glyph = FONT[(size_t) c];
 
-    for (size_t yy = 0; yy < 8; yy++) {
-        for (size_t xx = 0; xx < 8; xx++) {
-            if (glyph[yy] & (1 << xx)) {
-                VGA[(y + yy) * 320 + (x + xx)] = 0xF; 
-            }
-        }
-    }
-}
-
-void kprints_noprintf(char* str, size_t x, size_t y) {
-    size_t s = 0, ss = 0;
-    while(*str) {
-        if (*str == 10) ss++, s = -1;
-        kprintc(*str++, x + s++*8, y + ss*10);
-    }
-}
 
 /*
 See: https://wiki.osdev.org/VGA_Hardware#Port_0x3C8
