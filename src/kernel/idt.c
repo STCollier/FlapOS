@@ -9,7 +9,7 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     descriptor->isr_high       = (uint32_t)isr >> 16;
     descriptor->reserved       = 0;
 }
-char *idt_descriptions[0x1f] = {
+char *idt_descriptions[32] = {
     "Dividing error",
     "Debug",
     "Nonmaskable External Interrupt",

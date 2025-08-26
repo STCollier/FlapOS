@@ -15,13 +15,13 @@ void NOERR_IDT_HANDLER(uint32_t code) {
 void kmain(void) {
     
     memset(VGA, 0x1, 320 * 200); // clear vga mem
-    klog("Kernel loaded%c",'.');
+    klog("Kernel loaded");
     klog("Load IDT");
     idt_init();
     
-    klog("IDT loaded.");
+    klog("IDT loaded");
     __asm__ volatile ("int $1");
-    klog("Interrupt 15 test finished.");
+    klog("Interrupt 15 test finished");
     
     while(1){__asm__ volatile ("hlt");};
 

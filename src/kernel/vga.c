@@ -1,7 +1,8 @@
 #include "util.h"
 #include "vga.h"
 #include <stdarg.h> // yeah i dont know either
-uint8_t*VGA= (uint8_t*)0xA0000;
+uint8_t* VGA = (uint8_t*) 0xA0000;
+
 static const uint8_t FONT[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0001
@@ -157,20 +158,21 @@ void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
 
 void VGA_setPalette() {
     // We can either generate a palette with a loop, or select certain colors that pertain to the art we want
-
     VGA_setColor(0x1, 63, 0, 0);
 }
-size_t KPRINTF_CURRENT_X = 0;
-size_t KPRINTF_CURRENT_Y = 0;
-bool   FILLED_SCREEN = false;
-static void checkwrapping() {
+
+static size_t KPRINTF_CURRENT_X = 0;
+static size_t KPRINTF_CURRENT_Y = 1;
+static bool FILLED_SCREEN = false;
+
+static void checkwrap() {
     if (KPRINTF_CURRENT_X == 40) {
-        KPRINTF_CURRENT_X=0;
+        KPRINTF_CURRENT_X = 0;
         KPRINTF_CURRENT_Y++;
     }
-    if (KPRINTF_CURRENT_Y==20){
-        FILLED_SCREEN=true;
-        KPRINTF_CURRENT_Y=0;
+    if (KPRINTF_CURRENT_Y == 20){
+        FILLED_SCREEN = true;
+        KPRINTF_CURRENT_Y = 0;
     }
 }
 char* kitoa(int num, char* str, int base)
@@ -225,12 +227,19 @@ void kprints(char* str, size_t x, size_t y) {
         kprintc(*str++, x + s++*8, y + ss*10);
     }
 }
-void _kprintf_kprintc(char let) {
-    if (let=='\n') {KPRINTF_CURRENT_Y++;KPRINTF_CURRENT_X=0;checkwrapping(); return;}
-    kprintc(let,KPRINTF_CURRENT_X*8,KPRINTF_CURRENT_Y*10);
+void _kprintf_kprintc(char c) {
+    if (c == '\n') {
+        KPRINTF_CURRENT_Y++;
+        KPRINTF_CURRENT_X = 0;
+        checkwrap(); 
+        return;
+    }
+
+    kprintc(c, KPRINTF_CURRENT_X * 8, KPRINTF_CURRENT_Y * 10);
     KPRINTF_CURRENT_X++;
-    checkwrapping();
+    checkwrap();
 }
+
 void _kprintf_kprints(char *str) {
     char *mut = str;
     while (*mut) {
@@ -258,8 +267,8 @@ bool _kprintf_valist(char *format, va_list args) {
                 case 'x':
                     char *hexval = "0123456789ABCDEF";
                     uint32_t num  = va_arg(args,uint32_t);
-                    for(int sh = 32/4 - 1; sh >= 0; sh--) {
-                        char let = hexval[(num>>(sh*4))&0b1111];
+                    for (int sh = 32 / 4 - 1; sh >= 0; sh--) {
+                        char let = hexval[(num >> (sh * 4)) & 0xF];
                         _kprintf_kprintc(let);
                     }
                     break;
@@ -275,7 +284,7 @@ bool _kprintf_valist(char *format, va_list args) {
         }
         else if (current == '%') {
             in_specifier = true;
-            if (*(format+i+1)== '\0'){
+            if (*(format + i + 1)== '\0'){
                 _kprintf_kprintc('%');
                 in_specifier=false;
             }
@@ -311,15 +320,15 @@ bool klog(char *format, ...) {
     mutable = format;
     int i = 0;
     while (*mutable) {
-        msg[6+i] = *mutable;
+        msg[6 + i] = *mutable;
         mutable++;
         i++;
     } 
-    msg[6+len] = '\n';
-    msg[6+len+1] = '\0';
+    msg[6 + len] = '\n';
+    msg[6 + len + 1] = '\0';
     va_list args;
     va_start(args, format);
-    bool ret = _kprintf_valist(msg,args);
+    bool ret = _kprintf_valist(msg, args);
     va_end(args);
     return ret;
 }
