@@ -2,7 +2,7 @@
 #define VGA_H
 extern size_t KPRINTF_CURRENT_X;
 extern size_t KPRINTF_CURRENT_Y;
-extern uint8_t*VGA;//= (uint8_t*)0xA0000;
+extern uint8_t*VGA;
 void VGA_setPalette();
 void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b);
 void kprintc(char c, size_t x, size_t y);

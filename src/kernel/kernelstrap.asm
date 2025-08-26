@@ -5,22 +5,61 @@ _start:
 [bits 32]
 
 call kmain
-
+jmp $ 
 %macro ISR_ERR 1
 isr_stub_%+%1:
-    push eax ; save eax
+    ;cli
+    pusha ; a seg carg -arg -seg -a -8
+    mov ax, ds
+    push eax
+    mov ax, 10h
+    mov ds,ax
+    mov es,ax
+    mov fs,ax
+    mov gs,ax
+    
+    cld
     mov eax, %1
     push eax
     call ERR_IDT_HANDLER
-    pop eax ; return eax
-    iret 
+    pop eax
+
+    pop eax
+    mov ds,ax
+    mov es,ax
+    mov fs,ax
+    mov gs,ax
+    popa
+    add esp,8
+    ;sti
+    iret
 %endmacro
 
 %macro ISR_NO_ERR 1
 isr_stub_%+%1:
+    ;cli
+    pusha
+    mov ax, ds
+    push eax
+    mov ax, 10h
+    mov ds,ax
+    mov es,ax
+    mov fs,ax
+    mov gs,ax
+    cld
     mov eax, %1
     push eax
     call NOERR_IDT_HANDLER
+    pop eax
+
+    pop eax
+    mov ds,ax
+    mov es,ax
+    mov fs,ax
+    mov gs,ax
+    popa
+    add esp,8
+    ;sti
     iret
 %endmacro
 
@@ -66,5 +105,3 @@ ISR_TABLE:
     dd isr_stub_%+i
 %assign i i+1 
 %endrep
-
-jmp $ 

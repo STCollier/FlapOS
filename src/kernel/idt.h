@@ -22,6 +22,7 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 extern void* ISR_TABLE[];
+extern char* idt_descriptions[];
 static bool vectors[IDT_MAX_DESCRIPTORS];
 static idtr_t idtr;
 

@@ -9,7 +9,41 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     descriptor->isr_high       = (uint32_t)isr >> 16;
     descriptor->reserved       = 0;
 }
-
+char *idt_descriptions[0x1f] = {
+    "Dividing error",
+    "Debug",
+    "Nonmaskable External Interrupt",
+    "Breakpoint (int3)",
+    "Overflow (into)",
+    "BOUND Range Exceeded",
+    "Invalid (Undefined) opcode",
+    "Device Not Available (WAIT/FWAIT)",
+    "Double Fault",
+    "Coprocessor Segment Overrun",
+    "Invalid TSS Segment",
+    "Segment Not Present",
+    "Stack Segment Fault",
+    "General Protection Fault",
+    "Page Fault",
+    "Reserved (Inexplicable)",
+    "x87 Floating Point Error",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Floating Point Exception",
+    "Virtualization Exception",
+    "Control Protection Execution",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)",
+    "Reserved (Inexplicable)"
+};
 void idt_init() {
     idtr.base = (uintptr_t) &idt[0];
     idtr.limit = (uint16_t) sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;

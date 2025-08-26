@@ -25,16 +25,18 @@
     mov ah, 0x00
     mov al, 0x13
     int 0x10
-
+    cli
     lgdt [gdt_descriptor] ; load gdt (the below implementation i found used EVERYWHERE)
-
+    
+    
+    
     ;lastly we will need to enable a20 to get to PM.
     in al, 0x92
     or al, 2
     out 0x92, al
 
    
-    cli
+    
     mov eax, cr0
     or al, 1 ; i would just do eax but osdev said to do al so im doing al
     mov cr0, eax
