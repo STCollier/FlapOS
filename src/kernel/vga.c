@@ -162,7 +162,7 @@ void VGA_setPalette() {
 }
 
 static size_t KPRINTF_CURRENT_X = 0;
-static size_t KPRINTF_CURRENT_Y = 1;
+static size_t KPRINTF_CURRENT_Y = 0;
 static bool FILLED_SCREEN = false;
 
 static void checkwrap() {
@@ -170,10 +170,24 @@ static void checkwrap() {
         KPRINTF_CURRENT_X = 0;
         KPRINTF_CURRENT_Y++;
     }
-    if (KPRINTF_CURRENT_Y == 20){
-        FILLED_SCREEN = true;
-        KPRINTF_CURRENT_Y = 0;
+    if (KPRINTF_CURRENT_Y == 20 && !ENABLE_SCROLLING){
+            FILLED_SCREEN = true;
+            KPRINTF_CURRENT_Y = 0;
     }
+    if (KPRINTF_CURRENT_Y == 20 && ENABLE_SCROLLING) {
+        KPRINTF_CURRENT_Y=0;
+        while (KPRINTF_CURRENT_Y != 20) {
+            memcpy(
+                VGA+((40*8)*(KPRINTF_CURRENT_Y*10)),
+                VGA+((40*8)*((KPRINTF_CURRENT_Y+1)*10)),
+                40*8*10
+            );
+            KPRINTF_CURRENT_Y++;
+        }
+        KPRINTF_CURRENT_Y=19;
+            
+        }
+
 }
 char* kitoa(int num, char* str, int base)
 {

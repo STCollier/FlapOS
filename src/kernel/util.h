@@ -20,6 +20,11 @@ static inline void *memset(void *s, int c, size_t n) {
 
 	return (s);
 }
+static inline void memcpy(uint8_t *s,uint8_t *d, size_t n) {
+	for(;n>0;--n){
+		*(s+n)=*(d+n);
+	}
+}
 
 static inline void outportb(uint16_t port, uint8_t data) {
     asm("outb %1, %0" : : "dN" (port), "a" (data));

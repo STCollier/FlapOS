@@ -21,11 +21,21 @@ typedef struct {
 	uint32_t	base;
 } __attribute__((packed)) idtr_t;
 
+
+
 extern void* ISR_TABLE[];
 extern char* idt_descriptions[];
 static bool vectors[IDT_MAX_DESCRIPTORS];
 static idtr_t idtr;
-
+typedef struct {
+	uint32_t dataseg;
+	uint32_t edi,esi,ebp,esp,ebx,edx,ecx,eax;
+	uint32_t interrupt_code;
+	uint32_t error_code;
+	uint32_t eip,codeseg,eflags,useresp,ss;
+} __attribute__((packed)) idt_pushed_regs_t;
+void ERR_IDT_HANDLER(idt_pushed_regs_t regs);
+void NOERR_IDT_HANDLER(idt_pushed_regs_t regs);
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init();
 

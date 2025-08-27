@@ -8,8 +8,10 @@ call kmain
 jmp $ 
 %macro ISR_ERR 1
 isr_stub_%+%1:
+    mov eax, %1
+    push eax
     ;cli
-    pusha ; a seg carg -arg -seg -a -8
+    pusha 
     mov ax, ds
     push eax
     mov ax, 10h
@@ -19,10 +21,7 @@ isr_stub_%+%1:
     mov gs,ax
     
     cld
-    mov eax, %1
-    push eax
     call ERR_IDT_HANDLER
-    pop eax
 
     pop eax
     mov ds,ax
@@ -37,7 +36,10 @@ isr_stub_%+%1:
 
 %macro ISR_NO_ERR 1
 isr_stub_%+%1:
-    ;cli
+    mov eax, -1
+    push eax
+    mov eax, %1
+    push eax
     pusha
     mov ax, ds
     push eax
@@ -47,10 +49,8 @@ isr_stub_%+%1:
     mov fs,ax
     mov gs,ax
     cld
-    mov eax, %1
-    push eax
+    
     call NOERR_IDT_HANDLER
-    pop eax
 
     pop eax
     mov ds,ax
