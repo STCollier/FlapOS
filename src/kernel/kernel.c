@@ -4,7 +4,6 @@
 
 
 void kmain(void) {
-    
     memset(VGA, 0x1, 320 * 200); // clear vga mem
     
     klog("Kernel loaded.");

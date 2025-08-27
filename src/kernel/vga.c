@@ -164,6 +164,7 @@ void VGA_setPalette() {
 static size_t KPRINTF_CURRENT_X = 0;
 static size_t KPRINTF_CURRENT_Y = 0;
 static bool FILLED_SCREEN = false;
+static const bool ENABLE_SCROLLING = true;
 
 static void checkwrap() {
     if (KPRINTF_CURRENT_X == 40) {
@@ -171,26 +172,27 @@ static void checkwrap() {
         KPRINTF_CURRENT_Y++;
     }
     if (KPRINTF_CURRENT_Y == 20 && !ENABLE_SCROLLING){
-            FILLED_SCREEN = true;
-            KPRINTF_CURRENT_Y = 0;
+        FILLED_SCREEN = true;
+        KPRINTF_CURRENT_Y = 0;
     }
     if (KPRINTF_CURRENT_Y == 20 && ENABLE_SCROLLING) {
-        KPRINTF_CURRENT_Y=0;
+        KPRINTF_CURRENT_Y = 0;
+
         while (KPRINTF_CURRENT_Y != 20) {
             memcpy(
-                VGA+((40*8)*(KPRINTF_CURRENT_Y*10)),
-                VGA+((40*8)*((KPRINTF_CURRENT_Y+1)*10)),
+                VGA+((40*8) * (KPRINTF_CURRENT_Y*10)),
+                VGA+((40*8) * ((KPRINTF_CURRENT_Y+1)*10)),
                 40*8*10
             );
             KPRINTF_CURRENT_Y++;
         }
-        KPRINTF_CURRENT_Y=19;
-            
-        }
+
+        KPRINTF_CURRENT_Y = 19;   
+    }
 
 }
-char* kitoa(int num, char* str, int base)
-{
+
+static const char* kitoa(int num, char* str, int base) {
     int i = 0;
     bool neg = false;
     if (num == 0) {
@@ -222,6 +224,7 @@ char* kitoa(int num, char* str, int base)
     }
     return str;
 }
+
 void kprintc(char c, size_t x, size_t y) {
     const unsigned char *glyph = FONT[(size_t) c];
 
@@ -234,14 +237,15 @@ void kprintc(char c, size_t x, size_t y) {
     }
 }
 
-void kprints(char* str, size_t x, size_t y) {
+void kprints(const char* str, size_t x, size_t y) {
     size_t s = 0, ss = 0;
     while(*str) {
         if (*str == 10) ss++, s = -1;
         kprintc(*str++, x + s++*8, y + ss*10);
     }
 }
-void _kprintf_kprintc(char c) {
+
+static void _kprintf_kprintc(char c) {
     if (c == '\n') {
         KPRINTF_CURRENT_Y++;
         KPRINTF_CURRENT_X = 0;
@@ -254,7 +258,7 @@ void _kprintf_kprintc(char c) {
     checkwrap();
 }
 
-void _kprintf_kprints(char *str) {
+static void _kprintf_kprints(char *str) {
     char *mut = str;
     while (*mut) {
         _kprintf_kprintc(*mut);
@@ -262,8 +266,7 @@ void _kprintf_kprints(char *str) {
     } 
 }
 
-bool _kprintf_valist(char *format, va_list args) {
-    
+static bool _kprintf_valist(const char *format, va_list args) {
     bool in_specifier = false;
     for (int i = 0; *(format+i); i++) {
         char current = *(format+i);
@@ -310,7 +313,8 @@ bool _kprintf_valist(char *format, va_list args) {
     }
     return FILLED_SCREEN;
 }
-bool kprintf(char *format, ...) {
+
+bool kprintf(const char* format, ...) {
     va_list args;
     va_start(args,format);
     bool ret = _kprintf_valist(format,args);
@@ -318,8 +322,8 @@ bool kprintf(char *format, ...) {
     return ret;
 }
 
-bool klog(char *format, ...) {
-    char *mutable = format;
+bool klog(const char* format, ...) {
+    const char* mutable = format; // why is this called mutable?? i guess we'll never know
     
     while (*mutable){mutable++;}
     uint32_t len = mutable - format;

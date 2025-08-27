@@ -11,6 +11,7 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     descriptor->isr_high       = (uint32_t)isr >> 16;
     descriptor->reserved       = 0;
 }
+
 char *idt_descriptions[32] = {
     "Dividing error",
     "Debug",
@@ -45,6 +46,7 @@ char *idt_descriptions[32] = {
     "Reserved (Inexplicable)",
     "Reserved (Inexplicable)"
 };
+
 void idt_init() {
     idtr.base = (uintptr_t) &idt[0];
     idtr.limit = (uint16_t) sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
@@ -57,12 +59,14 @@ void idt_init() {
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
     __asm__ volatile ("sti"); // set the interrupt flag
 }
+
 void ERR_IDT_HANDLER(idt_pushed_regs_t regs) {
     klog("INT %d: %s with code %d",regs.interrupt_code,idt_descriptions[regs.interrupt_code],regs.error_code);
     klog("Begin pushed reg dump.\nds=%x\nedi=%x\nesi=%x\nebp=%x\nesp=%x\nebx=%x\nedx=%x\necx=%x\neax=%x\ni_code=%x\ne_code=%x\neip=%x\ncs=%x\neflags=%x\nuesp=%x\nss=%x\n",
     regs.dataseg,regs.edi,regs.esi,regs.esp,regs.ebx,regs.edx,regs.ecx,regs.eax,regs.interrupt_code,regs.error_code,regs.eip,regs.codeseg,regs.eflags,regs.useresp,regs.ss);
     __asm__ volatile ("cli; hlt"); // Completely hangs the computer
 }
+
 void NOERR_IDT_HANDLER(idt_pushed_regs_t regs) {
     klog("INT %d: %s",regs.interrupt_code, idt_descriptions[regs.interrupt_code]);
     return;
