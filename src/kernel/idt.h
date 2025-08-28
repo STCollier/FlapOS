@@ -22,7 +22,7 @@ typedef struct {
 } __attribute__((packed)) idtr_t;
 
 
-extern void* ISR_TABLE[];
+extern uint32_t* ISR_TABLE[];
 extern char* idt_descriptions[];
 
 static bool vectors[IDT_MAX_DESCRIPTORS];
@@ -34,10 +34,11 @@ typedef struct {
 	uint32_t interrupt_code;
 	uint32_t error_code;
 	uint32_t eip,codeseg,eflags,useresp,ss;
-} __attribute__((packed)) idt_pushed_regs_t;
+} __attribute__((packed)) idt_pushed_regs_t; // data structure for raw pushed data once called by idt
 
-void ERR_IDT_HANDLER(idt_pushed_regs_t regs);
-void NOERR_IDT_HANDLER(idt_pushed_regs_t regs);
+//void ERR_IDT_HANDLER(idt_pushed_regs_t regs);
+//void NOERR_IDT_HANDLER(idt_pushed_regs_t regs);
+void isr_handle(idt_pushed_regs_t regs);
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init();
 
