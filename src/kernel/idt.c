@@ -1,7 +1,7 @@
 #include "vga.h"
 #include "util.h"
 #include "idt.h"
-
+#include "pic.h"
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     idt_entry_t* descriptor = &idt[vector];
 
@@ -12,7 +12,7 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     descriptor->reserved       = 0;
 }
 
-char *idt_descriptions[32] = {
+char *idt_descriptions[32+16] = {
     "Dividing error",
     "Debug",
     "Nonmaskable External Interrupt",
@@ -44,7 +44,23 @@ char *idt_descriptions[32] = {
     "Reserved (Inexplicable)",
     "Reserved (Inexplicable)",
     "Reserved (Inexplicable)",
-    "Reserved (Inexplicable)"
+    "Reserved (Inexplicable)",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
+    "IRQ Interrupt",
 };
 
 void idt_init() {
@@ -61,6 +77,16 @@ void idt_init() {
 }
 void isr_handle(idt_pushed_regs_t regs) {
     klog("INT %d (code=%x): %s",regs.interrupt_code, regs.error_code, idt_descriptions[regs.interrupt_code]);
-    if (regs.interrupt_code == 1) return;
-    __asm__ volatile ("cli;hlt");
+    if (regs.interrupt_code == 1) return; 
+    if (regs.interrupt_code > 31) {
+      // dealing with irq
+      if(regs.interrupt_code-32 >= 8)
+		    outb(PIC_SLAVE_BASE,PIC_EOI);
+	
+	    outb(PIC_MASTER_BASE,PIC_EOI);
+      klog("PIC Reset");
+      return;
+    }
+    //__asm__ volatile ("cli;hlt");
 }
+

@@ -1,7 +1,7 @@
 #include "util.h"
 #include "idt.h"
 #include "vga.h"
-
+#include "pic.h"
 
 void kmain(void) {
     memset(VGA, 0x1, 320 * 200); // clear vga mem
@@ -14,6 +14,11 @@ void kmain(void) {
     __asm__ volatile ("int $1");
     klog("Interrupt 1 test finished.");
     
+    map_pic();
+    klog("PIC Mapped");
+    init_pit(50);
+    klog("PIT Init");
+    while(true);
     /*
     
     https://wiki.osdev.org/Interrupt_Vector_Table#Default_Hardware_Interrupt_Layout

@@ -10,7 +10,7 @@ typedef uint32_t uintptr_t;
 #define true 1
 #define false 0
 #define bool uint8_t
-
+#define outb outportb
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
 
@@ -35,5 +35,17 @@ static inline void memcpy(uint8_t *s, uint8_t *d, size_t n) {
 static inline void outportb(uint16_t port, uint8_t data) {
     asm("outb %1, %0" : : "dN" (port), "a" (data));
 }
-
+static inline uint8_t inb(uint16_t port)
+{
+    uint8_t ret;
+    __asm__ volatile ( "inb %w1, %b0"
+                   : "=a"(ret)
+                   : "Nd"(port)
+                   : "memory");
+    return ret;
+}
+static inline void io_wait(void)
+{
+    outb(0x80, 0);
+}
 #endif

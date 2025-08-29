@@ -79,7 +79,22 @@ isr_nocode 28
 isr_nocode 29
 isr_nocode 30
 isr_nocode 31
-
+isr_nocode 32
+isr_nocode 33
+isr_nocode 34
+isr_nocode 35
+isr_nocode 36
+isr_nocode 37
+isr_nocode 38
+isr_nocode 39
+isr_nocode 40
+isr_nocode 41
+isr_nocode 42
+isr_nocode 43
+isr_nocode 44
+isr_nocode 45
+isr_nocode 46
+isr_nocode 47
 ISR_TABLE:
 dd isr0
 dd isr1
@@ -113,3 +128,20 @@ dd isr28
 dd isr29
 dd isr30
 dd isr31
+dd isr32
+dd isr33
+dd isr34
+dd isr35
+dd isr36
+dd isr37
+dd isr38
+dd isr39
+dd isr40
+dd isr41
+dd isr42
+dd isr43
+dd isr44
+dd isr45
+dd isr46
+dd isr47
+

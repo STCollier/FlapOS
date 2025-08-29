@@ -15,10 +15,12 @@ kernel:
 	$(CC) $(CFLAGS) -c src/kernel/kernel.c -o ./bin/kernel.c.o
 	$(CC) $(CFLAGS) -c src/kernel/vga.c -o ./bin/vga.c.o
 	$(CC) $(CFLAGS) -c src/kernel/idt.c -o ./bin/idt.c.o
+	$(CC) $(CFLAGS) -c src/kernel/pic.c -o ./bin/pic.c.o
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 	$(LD) --oformat binary -o ./bin/kernel.bin -Ttext 0x1000 ./bin/kernelstrap.asm.o \
 		./bin/vga.c.o \
 		./bin/idt.c.o \
+		./bin/pic.c.o \
 		./bin/kernel.c.o 
 		  
 concat:
