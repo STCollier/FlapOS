@@ -1,7 +1,7 @@
 [org 0x7c00]
 
 .start:
-    mov byte [DL_AT_BOOT], dl
+    cli
 
     xor ax, ax
     mov ds, ax
@@ -9,43 +9,42 @@
     mov fs, ax
     mov gs, ax
     mov es, ax
-    ; reset seg registers
-    ;begin 13h
-    cli
-    mov ah, 2 ; read command
-    mov al, KERNEL_SIZE ; kernel sector count
-    xor ch, ch ; cylinder pos
-    mov cl, 2 ; sector 2 is the start sector (the one after bootsector)
-    xor dh, dh ; head number
+
+    mov [DL_AT_BOOT], dl
+
+    ; begin 13h
+    mov ah, 2               ; read command
+    mov al, KERNEL_SIZE     ; kernel sector count
+    xor ch, ch              ; cylinder pos
+    mov cl, 2               ; sector 2 is the start sector (the one after bootsector)
+    xor dh, dh              ; head number
     mov dl, [DL_AT_BOOT]
+    
     mov bx, KERNEL_POSITION ; destination address
     int 13h
 
-    ; set video mode 13h (320x200x256) for later
+    ; set video mode 13h (320x200x256)
     mov ah, 0x00
     mov al, 0x13
     int 0x10
-    cli
-    lgdt [gdt_descriptor] ; load gdt (the below implementation i found used EVERYWHERE)
+
+    ; load GDT
+    lgdt [gdt_descriptor]
     
-    
-    
-    ;lastly we will need to enable a20 to get to PM.
+    ; enable a20 to get to PM.
     in al, 0x92
     or al, 2
     out 0x92, al
 
     
     mov eax, cr0
-    or al, 1 ; i would just do eax but osdev said to do al so im doing al
+    or eax, 1
     mov cr0, eax
-    ; we are now in protected mode, do some init and hand over to kernel
-    
-    ;jmp 08h:0
-    ;[bits 32]
-    mov esp, STACK_END ; stack grows backwards
-    
-    
+
+    jmp 0x08:entry32
+
+[bits 32]
+entry32:
     ;set other segment registers to the data seg
     mov ax, 10h
     mov ds, ax
@@ -53,7 +52,10 @@
     mov fs, ax
     mov gs, ax
     mov es, ax
-    jmp 0x08:KERNEL_POSITION 
+
+    mov esp, STACK_END 
+    jmp 0x08:KERNEL_POSITION
+
     
 gdt_start:
     ;gdt null sec

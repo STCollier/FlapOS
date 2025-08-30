@@ -1,6 +1,7 @@
 #include "util.h"
 #include "vga.h"
-#include <stdarg.h> // yeah i dont know either
+#include <stdarg.h> // TODO: remove eventually with builtin impl
+
 uint8_t* VGA = (uint8_t*) 0xA0000;
 
 static const uint8_t FONT[128][8] = {
@@ -284,6 +285,7 @@ static bool _kprintf_valist(const char *format, va_list args) {
                 case 'x':
                     char *hexval = "0123456789ABCDEF";
                     uint32_t num  = va_arg(args,uint32_t);
+                    _kprintf_kprints("0x");
                     for (int sh = 32 / 4 - 1; sh >= 0; sh--) {
                         char let = hexval[(num >> (sh * 4)) & 0xF];
                         _kprintf_kprintc(let);

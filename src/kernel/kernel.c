@@ -1,30 +1,22 @@
 #include "util.h"
-#include "idt.h"
 #include "vga.h"
-#include "pic.h"
+#include "isr.h"
+#include "idt.h"
+
+#define TI(x)                      \
+    klog("Call interrupt %d.", x); \
+    __asm__ volatile("int $" #x);  \
+
 
 void kmain(void) {
-    memset(VGA, 0x1, 320 * 200); // clear vga mem
+    memset(VGA, 0x1, 320 * 200);
     
     klog("Kernel loaded.");
-    klog("Load IDT.");
-    idt_init();
     
-    klog("IDT loaded.");
-    __asm__ volatile ("int $1");
-    klog("Interrupt 1 test finished.");
+    isr_init();
+    irq_init();
     
-    map_pic();
-    klog("PIC Mapped");
-    init_pit(50);
-    klog("PIT Init");
-    while(true);
-    /*
-    
-    https://wiki.osdev.org/Interrupt_Vector_Table#Default_Hardware_Interrupt_Layout
-    https://stackoverflow.com/questions/79230135/kernel-double-fault-when-loading-idt-os-dev
-    https://wiki.osdev.org/8259_PIC
-    */ 
-    // halting is outside the function
-    
+    TI(0)
+    TI(1)
+    TI(2)
 }

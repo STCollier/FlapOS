@@ -11,6 +11,10 @@ typedef uint32_t uintptr_t;
 #define false 0
 #define bool uint8_t
 #define outb outportb
+
+#define low_16(address) (uint16_t)((address) & 0xFFFF)
+#define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
 
