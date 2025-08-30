@@ -76,8 +76,11 @@ void idt_init() {
     __asm__ volatile ("sti"); // set the interrupt flag
 }
 void isr_handle(idt_pushed_regs_t regs) {
-    klog("INT %d (code=%x): %s",regs.interrupt_code, regs.error_code, idt_descriptions[regs.interrupt_code]);
-    if (regs.interrupt_code == 1) return; 
+    klog("INT %d (code=%x): %s", regs.interrupt_code, regs.error_code, idt_descriptions[regs.interrupt_code]);
+    if (regs.interrupt_code == 1) return;
+    if (regs.interrupt_code == 0xD) {
+        klog("GPF at EIP=%08x CS=%x ERR=%x", regs.eip, regs.codeseg, regs.error_code);
+    }
     if (regs.interrupt_code > 31) {
       // dealing with irq
       if(regs.interrupt_code-32 >= 8)

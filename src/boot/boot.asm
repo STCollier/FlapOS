@@ -35,7 +35,6 @@
     or al, 2
     out 0x92, al
 
-   
     
     mov eax, cr0
     or al, 1 ; i would just do eax but osdev said to do al so im doing al

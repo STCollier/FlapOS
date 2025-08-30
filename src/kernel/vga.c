@@ -323,27 +323,16 @@ bool kprintf(const char* format, ...) {
 }
 
 bool klog(const char* format, ...) {
-    const char* mutable = format; // why is this called mutable?? i guess we'll never know
-    
-    while (*mutable){mutable++;}
-    uint32_t len = mutable - format;
-    char msg[6+len+1+1]; // "[KNL] " + length + \n + \0
-    
-    msg[0]='[';
-    msg[1]='K';
-    msg[2]='N';
-    msg[3]='L';
-    msg[4]=']';
-    msg[5]=' ';
-    mutable = format;
-    int i = 0;
-    while (*mutable) {
-        msg[6 + i] = *mutable;
-        mutable++;
-        i++;
-    } 
-    msg[6 + len] = '\n';
-    msg[6 + len + 1] = '\0';
+    size_t i = 0;
+    char* t = "[KNL] ";
+    char msg[strlen(t) + strlen(format) + 2]; // (+2) for newline and null terminator
+
+    while (*t) msg[i++] = *t++;
+    while (*format) msg[i++] = *format++;
+
+    msg[i] = 10;
+    msg[i + 1] = 0;
+
     va_list args;
     va_start(args, format);
     bool ret = _kprintf_valist(msg, args);

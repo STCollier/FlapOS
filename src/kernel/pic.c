@@ -1,5 +1,6 @@
 #include "util.h"
 #include "pic.h"
+
 void map_pic() {
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
