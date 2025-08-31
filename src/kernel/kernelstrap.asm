@@ -30,8 +30,8 @@ ISR%1:
 
 ; IRQ [32, 47]
 %macro IRQ 1
-    global IRQ%1
-IRQ%1:
+    global _IRQ%1
+_IRQ%1:
     cli
     push dword 0 
     push dword (32 + %1)

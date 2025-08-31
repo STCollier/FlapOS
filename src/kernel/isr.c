@@ -40,79 +40,41 @@ void isr_init() {
     set_idt_gate(31, (uintptr_t) ISR31);
 
     // Remap the PIC
-    outportb(PIC1, 0x11);
-    outportb(PIC2, 0x11);
-    outportb(0x21, 0x20);
-    outportb(0xA1, 0x28);
-    outportb(0x21, 0x04);
-    outportb(0xA1, 0x02);
-    outportb(0x21, 0x01);
-    outportb(0xA1, 0x01);
-    outportb(0x21, 0x0);
-    outportb(0xA1, 0x0); 
+    outportb(PIC1, ICW1_INIT | ICW1_ICW4);
+    outportb(PIC2, ICW1_INIT | ICW1_ICW4);
+    outportb(PIC1_DATA, PIC1_OFFSET);
+    outportb(PIC2_DATA, PIC2_OFFSET);
+    outportb(PIC1_DATA, 0x04);
+    outportb(PIC2_DATA, 0x02); 
+    outportb(PIC1_DATA, PIC_MODE_8086);
+    outportb(PIC1_DATA, PIC_MODE_8086);
+    outportb(PIC1_DATA, 0x0);
+    outportb(PIC2_DATA, 0x0);
 
     // Install the IRQs
-    set_idt_gate(32, (uintptr_t) IRQ0);
-    set_idt_gate(33, (uintptr_t) IRQ1);
-    set_idt_gate(34, (uintptr_t) IRQ2);
-    set_idt_gate(35, (uintptr_t) IRQ3);
-    set_idt_gate(36, (uintptr_t) IRQ4);
-    set_idt_gate(37, (uintptr_t) IRQ5);
-    set_idt_gate(38, (uintptr_t) IRQ6);
-    set_idt_gate(39, (uintptr_t) IRQ7);
-    set_idt_gate(40, (uintptr_t) IRQ8);
-    set_idt_gate(41, (uintptr_t) IRQ9);
-    set_idt_gate(42, (uintptr_t) IRQ10);
-    set_idt_gate(43, (uintptr_t) IRQ11);
-    set_idt_gate(44, (uintptr_t) IRQ12);
-    set_idt_gate(45, (uintptr_t) IRQ13);
-    set_idt_gate(46, (uintptr_t) IRQ14);
-    set_idt_gate(47, (uintptr_t) IRQ15);
+    set_idt_gate(32, (uintptr_t) _IRQ0);
+    set_idt_gate(33, (uintptr_t) _IRQ1);
+    set_idt_gate(34, (uintptr_t) _IRQ2);
+    set_idt_gate(35, (uintptr_t) _IRQ3);
+    set_idt_gate(36, (uintptr_t) _IRQ4); 
+    set_idt_gate(37, (uintptr_t) _IRQ5);
+    set_idt_gate(38, (uintptr_t) _IRQ6);
+    set_idt_gate(39, (uintptr_t) _IRQ7);
+    set_idt_gate(40, (uintptr_t) _IRQ8);
+    set_idt_gate(41, (uintptr_t) _IRQ9);
+    set_idt_gate(42, (uintptr_t) _IRQ10);
+    set_idt_gate(43, (uintptr_t) _IRQ11);
+    set_idt_gate(44, (uintptr_t) _IRQ12);
+    set_idt_gate(45, (uintptr_t) _IRQ13);
+    set_idt_gate(46, (uintptr_t) _IRQ14);
+    set_idt_gate(47, (uintptr_t) _IRQ15);
 
-    set_idt(); // Load with ASM
-}
+    set_idt();
+}  
 
-/* To print the message which defines every exception */
-char *exception_messages[] = {
-    "Division By Zero",
-    "Debug",
-    "Non Maskable Interrupt",
-    "Breakpoint",
-    "Into Detected Overflow",
-    "Out of Bounds",
-    "Invalid Opcode",
-    "No Coprocessor",
-
-    "Double Fault",
-    "Coprocessor Segment Overrun",
-    "Bad TSS",
-    "Segment Not Present",
-    "Stack Fault",
-    "General Protection Fault",
-    "Page Fault",
-    "Unknown Interrupt",
-
-    "Coprocessor Fault",
-    "Alignment Check",
-    "Machine Check",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved",
-    "Reserved"
-};
 
 void isr_handler(registers_t r) {
-	klog("Interrupt %x (%s) triggered.", r.int_no, exception_messages[r.int_no]);
+	klog("Interrupt %x (%s) triggered.", r.int_no, EXCEPTIONS[r.int_no]);
 }
 
 void register_interrupt_handler(uint8_t n, isr_t handler) {
@@ -122,12 +84,12 @@ void register_interrupt_handler(uint8_t n, isr_t handler) {
 void irq_handler(registers_t r) {
     /* After every interrupt we need to send an EOI to the PICs
      * or they will not send another interrupt again */
-    if (r.int_no >= 40) outportb(PIC2, PIC1); /* slave */
-    outportb(PIC1, PIC1); /* master */
+    if (r.int_no >= 40) outportb(PIC2, PIC_EOI); /* slave */
+    outportb(PIC1, PIC_EOI); /* master */
 
     /* Handle the interrupt in a more modular way */
     if (interrupt_handlers[r.int_no] != 0) {
-         isr_t handler = interrupt_handlers[r.int_no];
+        isr_t handler = interrupt_handlers[r.int_no];
         handler(r);
     }
 }
