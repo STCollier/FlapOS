@@ -11,6 +11,10 @@ typedef uint32_t uintptr_t;
 #define false 0
 #define bool uint8_t
 #define outb outportb
+#define inb  inportb
+
+#define WIDTH 640
+#define HEIGHT 480
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)
@@ -46,7 +50,7 @@ static inline void outportb(uint16_t port, uint8_t data) {
     asm("outb %1, %0" : : "dN" (port), "a" (data));
 }
 
-static inline uint8_t inb(uint16_t port) {
+static inline uint8_t inportb(uint16_t port) {
     uint8_t ret;
     __asm__ volatile (
 		"inb %w1, %b0"

@@ -24,8 +24,12 @@
     int 13h
 
     ; set video mode 13h (320x200x256)
-    mov ah, 0x00
-    mov al, 0x13
+    ; mov ah, 0x00
+    ; mov al, 0x13
+    ; int 0x10
+
+    mov ax, 0x4F02    ; VESA set mode
+    mov bx, 0x101     ; 640x480x256
     int 0x10
 
     ; load GDT

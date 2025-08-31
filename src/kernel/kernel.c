@@ -1,7 +1,6 @@
 #include "util.h"
 #include "vga.h"
 #include "isr.h"
-#include "idt.h"
 #include "timer.h"
 
 #define TI(x)                                  \
@@ -10,14 +9,27 @@
 
 
 void kmain(void) {
-    memset(VGA, 0x1, 320 * 200);
+    memset(VGA, 0x1, WIDTH * HEIGHT);
     
     klog("Kernel loaded.");
     
+    klog("Load ISR.");
     isr_init();
+
+    klog("Load IRQ.");
     irq_init();
 
-    TI(0)
+    klog("Test interrupt 0x1");
     TI(1)
-    TI(2)
+
+    klog("Try pressing space");
+
+    uint64_t t = 0;
+    while (true) {
+        if (tick() != t) {
+            t = tick();
+
+            //klog("Tick: %d", t);
+        }
+    }
 }

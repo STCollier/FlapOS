@@ -1,6 +1,7 @@
 UNAME_S := $(shell uname -s)
 CC=i386-elf-gcc
 LD=i386-elf-ld
+NO_SSE = -mno-sse -mno-sse2 -mfpmath=387 -march=i386
 
 ifeq ($(UNAME_S),Linux)
 CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -g -Wall -Wextra \
@@ -61,9 +62,10 @@ bootloader:
 kernel:
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/kernel.c -o ./bin/kernel.c.o
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/vga.c -o ./bin/vga.c.o
-	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/idt.c -o ./bin/idt.c.o
-	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/isr.c -o ./bin/isr.c.o
-	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/timer.c -o ./bin/timer.c.o
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/idt.c -o ./bin/idt.c.o 			 $(NO_SSE)
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/isr.c -o ./bin/isr.c.o 			 $(NO_SSE)
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/timer.c -o ./bin/timer.c.o	     $(NO_SSE)
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/keyboard.c -o ./bin/keyboard.c.o $(NO_SSE)
 
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 
@@ -75,6 +77,7 @@ kernel:
 		./bin/idt.c.o \
 		./bin/isr.c.o \
 		./bin/timer.c.o \
+		./bin/keyboard.c.o \
 
 	# Then, make the flat binary (for booting)
 	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 \
@@ -84,6 +87,7 @@ kernel:
 		./bin/idt.c.o \
 		./bin/isr.c.o \
 		./bin/timer.c.o \
+		./bin/keyboard.c.o \
 		--oformat binary
 
 objdump:

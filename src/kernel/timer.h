@@ -9,6 +9,7 @@
 #define PIT2     0x42
 #define PIT_CMD  0x43
 
-void timer_init(uint32_t hz);
+void timer_init(uint64_t hz);
+uint64_t tick();
 
 #endif

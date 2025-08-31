@@ -3,6 +3,7 @@
 #include "vga.h"
 #include "idt.h"
 #include "timer.h"
+#include "keyboard.h"
 
 isr_t interrupt_handlers[256];
 
@@ -73,10 +74,13 @@ void isr_init() {
     set_idt();
 }  
 
-
+static bool HANG = false;
 void isr_handler(registers_t r) {
-	klog("Interrupt %x (%s) triggered.", r.int_no, EXCEPTIONS[r.int_no]);
+    klog("Exception %x (%s) at EIP=%x CS=%x EFLAGS=%x", r.int_no, EXCEPTIONS[r.int_no], r.eip, r.cs, r.eflags);
+
+    if (HANG) for(;;);
 }
+
 
 void register_interrupt_handler(uint8_t n, isr_t handler) {
     interrupt_handlers[n] = handler;
@@ -96,8 +100,7 @@ void irq_handler(registers_t r) {
 }
 
 void irq_init() {
-    klog("_IRQ0 -> %x, _IRQ1 -> %x", (void*)_IRQ0, (void*)_IRQ1);
-    //asm volatile("sti");
-    timer_init(50);
-    //asm volatile("sti");
+    asm volatile("sti");
+    timer_init(60); // 60 TPS (or FPS depending on how you look at it)
+    keyboard_init();
 }
