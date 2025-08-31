@@ -2,10 +2,11 @@
 #include "vga.h"
 #include "isr.h"
 #include "idt.h"
+#include "timer.h"
 
-#define TI(x)                      \
-    klog("Call interrupt %d.", x); \
-    __asm__ volatile("int $" #x);  \
+#define TI(x)                                  \
+    klog("Call interrupt %d.", x);             \
+    __asm__ volatile("int %0" :: "i"(x));
 
 
 void kmain(void) {
@@ -15,7 +16,7 @@ void kmain(void) {
     
     isr_init();
     irq_init();
-    
+
     TI(0)
     TI(1)
     TI(2)

@@ -2,6 +2,7 @@
 #include "util.h"
 #include "vga.h"
 #include "idt.h"
+#include "timer.h"
 
 isr_t interrupt_handlers[256];
 
@@ -40,16 +41,16 @@ void isr_init() {
     set_idt_gate(31, (uintptr_t) ISR31);
 
     // Remap the PIC
-    outportb(PIC1, ICW1_INIT | ICW1_ICW4);
-    outportb(PIC2, ICW1_INIT | ICW1_ICW4);
-    outportb(PIC1_DATA, PIC1_OFFSET);
-    outportb(PIC2_DATA, PIC2_OFFSET);
-    outportb(PIC1_DATA, 0x04);
-    outportb(PIC2_DATA, 0x02); 
-    outportb(PIC1_DATA, PIC_MODE_8086);
-    outportb(PIC1_DATA, PIC_MODE_8086);
-    outportb(PIC1_DATA, 0x0);
-    outportb(PIC2_DATA, 0x0);
+    outportb(0x20, 0x11);
+    outportb(0xA0, 0x11);
+    outportb(0x21, 0x20);
+    outportb(0xA1, 0x28);
+    outportb(0x21, 0x04);
+    outportb(0xA1, 0x02);
+    outportb(0x21, 0x01);
+    outportb(0xA1, 0x01);
+    outportb(0x21, 0x0);
+    outportb(0xA1, 0x0);
 
     // Install the IRQs
     set_idt_gate(32, (uintptr_t) _IRQ0);
@@ -84,8 +85,8 @@ void register_interrupt_handler(uint8_t n, isr_t handler) {
 void irq_handler(registers_t r) {
     /* After every interrupt we need to send an EOI to the PICs
      * or they will not send another interrupt again */
-    if (r.int_no >= 40) outportb(PIC2, PIC_EOI); /* slave */
-    outportb(PIC1, PIC_EOI); /* master */
+    if (r.int_no >= 40) outportb(0xA0, 0x20); /* slave */
+    outportb(0x20, 0x20); /* master */
 
     /* Handle the interrupt in a more modular way */
     if (interrupt_handlers[r.int_no] != 0) {
@@ -95,6 +96,8 @@ void irq_handler(registers_t r) {
 }
 
 void irq_init() {
-    // do timer and keyboard stuff here unforunately i have to be like social at college or something so i cant do that now 
-    // setting up the keyboard driver and PIT (clock) should be pretty fun and fairly simple tho
+    klog("_IRQ0 -> %x, _IRQ1 -> %x", (void*)_IRQ0, (void*)_IRQ1);
+    //asm volatile("sti");
+    timer_init(50);
+    //asm volatile("sti");
 }

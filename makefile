@@ -63,6 +63,7 @@ kernel:
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/vga.c -o ./bin/vga.c.o
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/idt.c -o ./bin/idt.c.o
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/isr.c -o ./bin/isr.c.o
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/timer.c -o ./bin/timer.c.o
 
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 
@@ -72,7 +73,8 @@ kernel:
 		./bin/kernel.c.o \
 		./bin/vga.c.o \
 		./bin/idt.c.o \
-		./bin/isr.c.o
+		./bin/isr.c.o \
+		./bin/timer.c.o \
 
 	# Then, make the flat binary (for booting)
 	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 \
@@ -81,6 +83,7 @@ kernel:
 		./bin/vga.c.o \
 		./bin/idt.c.o \
 		./bin/isr.c.o \
+		./bin/timer.c.o \
 		--oformat binary
 
 objdump:
