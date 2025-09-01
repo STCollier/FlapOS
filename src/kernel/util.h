@@ -13,11 +13,15 @@ typedef uint32_t uintptr_t;
 #define outb outportb
 #define inb  inportb
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 320
+#define HEIGHT 200
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)
+
+#define TEST_INTERRUPT(x) \
+    klog("Call interrupt %d.", x); \
+    __asm__ volatile("int %0" :: "i"(x));
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
@@ -45,6 +49,44 @@ static inline size_t strlen(const char* str) {
 }
 
 #pragma GCC diagnostic pop
+
+static const char* itoa(int num, char* str, int base) {
+    int i = 0;
+    bool neg = false;
+
+    if (num == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+
+    if (num < 0 && base == 10) {
+        neg = true;
+        num = -num;
+    }
+
+    while (num != 0) {
+        int rem = num % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        num = num / base;
+    }
+
+    if (neg) str[i++] = '-';
+
+    str[i] = '\0';
+    int start = 0;
+    int end = i - 1;
+
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        end--;
+        start++;
+    }
+
+    return str;
+}
 
 static inline void outportb(uint16_t port, uint8_t data) {
     asm("outb %1, %0" : : "dN" (port), "a" (data));

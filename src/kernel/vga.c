@@ -158,14 +158,21 @@ void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void VGA_setPalette() {
-    // We can either generate a palette with a loop, or select certain colors that pertain to the art we want
-    VGA_setColor(0x1, 63, 0, 0);
+    VGA_setColor(0, 0, 0, 53);
+
+    VGA_setColor(1, 20, 13, 17); 
+    VGA_setColor(2, 62, 53, 35); 
+    VGA_setColor(3, 62, 62, 62); 
+    VGA_setColor(4, 61, 45, 12); 
+    VGA_setColor(5, 53, 57, 51); 
+    VGA_setColor(6, 62, 13, 0); 
+    VGA_setColor(7, 56, 32, 10); 
 }
 
 static size_t KPRINTF_CURRENT_X = 0;
 static size_t KPRINTF_CURRENT_Y = 0;
 static bool FILLED_SCREEN = false;
-static const bool ENABLE_SCROLLING = true;
+static const bool ENABLE_SCROLLING = false;
 
 static void checkwrap() {
     size_t maxw = WIDTH / 8;
@@ -177,7 +184,7 @@ static void checkwrap() {
     }
     if (KPRINTF_CURRENT_Y == maxh && !ENABLE_SCROLLING){
         FILLED_SCREEN = true;
-        KPRINTF_CURRENT_Y = 0;
+        //KPRINTF_CURRENT_Y = 0;
     }
     if (KPRINTF_CURRENT_Y == maxh && ENABLE_SCROLLING) {
         KPRINTF_CURRENT_Y = 0;
@@ -194,39 +201,6 @@ static void checkwrap() {
         KPRINTF_CURRENT_Y = maxh - 1;   
     }
 
-}
-
-static const char* kitoa(int num, char* str, int base) {
-    int i = 0;
-    bool neg = false;
-    if (num == 0) {
-        str[i++] = '0';
-        str[i] = '\0';
-        return str;
-    }
-    if (num < 0 && base == 10) {
-        neg = true;
-        num = -num;
-    }
-
-    while (num != 0) {
-        int rem = num % base;
-        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
-        num = num / base;
-    }
-    if (neg)
-        str[i++] = '-';
-    str[i] = '\0';
-    int start = 0;
-    int end = i - 1;
-    while (start < end) {
-        char temp = str[start];
-        str[start] = str[end];
-        str[end] = temp;
-        end--;
-        start++;
-    }
-    return str;
 }
 
 void kprintc(char c, size_t x, size_t y) {
@@ -277,9 +251,8 @@ static bool _kprintf_valist(const char *format, va_list args) {
         if (in_specifier) {
             switch(current) {
                 case 'c':
-                   // idk why but it gets really angry if its not a u32 passed in.
-                   // id have to guess its some weirdness with the fact that im passing in stdarg.h from my linux system into a baremetal os but what do i know
-                   _kprintf_kprintc((uint8_t)va_arg(args, uint32_t));
+                   // NOTE: pass u32
+                   _kprintf_kprintc((uint8_t) va_arg(args, uint32_t));
                    break;
                 case 's':
                     char *ptr = va_arg(args,char*);
@@ -297,7 +270,7 @@ static bool _kprintf_valist(const char *format, va_list args) {
                 case 'd':
                     int n = va_arg(args,int);
                     char out[20];
-                    kitoa(n,out,10);
+                    itoa(n,out,10);
                     _kprintf_kprints(out);
                     break;
             }
@@ -343,4 +316,8 @@ bool klog(const char* format, ...) {
     bool ret = _kprintf_valist(msg, args);
     va_end(args);
     return ret;
+}
+
+void putpixel(uint8_t color, size_t x, size_t y) {
+    VGA[y * WIDTH + x] = color; 
 }

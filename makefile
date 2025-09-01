@@ -66,6 +66,7 @@ kernel:
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/isr.c -o ./bin/isr.c.o 			 $(NO_SSE)
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/timer.c -o ./bin/timer.c.o	     $(NO_SSE)
 	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/keyboard.c -o ./bin/keyboard.c.o $(NO_SSE)
+	x86_64-elf-gcc $(CFLAGS) -m32 -c src/kernel/bird.c -o ./bin/bird.c.o
 
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 
@@ -78,6 +79,7 @@ kernel:
 		./bin/isr.c.o \
 		./bin/timer.c.o \
 		./bin/keyboard.c.o \
+		./bin/bird.c.o \
 
 	# Then, make the flat binary (for booting)
 	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 \
@@ -88,6 +90,7 @@ kernel:
 		./bin/isr.c.o \
 		./bin/timer.c.o \
 		./bin/keyboard.c.o \
+		./bin/bird.c.o \
 		--oformat binary
 
 objdump:

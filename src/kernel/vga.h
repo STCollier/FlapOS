@@ -12,4 +12,6 @@ void kprints(const char* str, size_t x, size_t y);
 bool kprintf(const char *format, ...);
 bool klog(const char *format, ...);
 
+void putpixel(uint8_t color, size_t x, size_t y);
+
 #endif
