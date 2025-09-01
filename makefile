@@ -1,18 +1,18 @@
 UNAME_S := $(shell uname -s)
-CC=i386-elf-gcc
-LD=i386-elf-ld
+CC=
+LD=
 OUT=./bin
-_OBJS=
 ifeq ($(UNAME_S),Linux)
 CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -g -Wall -Wextra -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter\
          -fno-exceptions -nostdlib -nostdinc -fno-stack-protector \
-         -fno-builtin-function -fno-builtin \
-		 -mno-sse -mno-sse2 -mfpmath=387 -march=i386
+         -fno-builtin-function -fno-builtin 
+CC=i386-elf-gcc
+LD=i386-elf-ld
 endif
 ifeq ($(UNAME_S),Darwin)
-CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -g -Wall -Wextra \
-         -fno-exceptions -m32 -nostdlib -nostdinc -fno-stack-protector \
-         -fno-builtin-function -fno-builtin \
+CFLAGS = -ffreestanding -g -Wall -Wextra -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter\
+         -fno-exceptions -melf_i386 -nostdlib -nostdinc -fno-stack-protector \
+         -fno-builtin-function -fno-builtin 
 		 -mno-sse -mno-sse2 -mfpmath=387 -march=i386
 CC=x86_64-elf-gcc
 LD=x86_64-elf-ld
