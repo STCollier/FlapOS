@@ -1,4 +1,4 @@
-#include "pipe.h"
+#include "pipes.h"
 #include "vga.h"
 
 static const uint8_t pipe[100][52] = {

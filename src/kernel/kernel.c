@@ -4,7 +4,7 @@
 #include "timer.h"
 #include "keyboard.h"
 #include "bird.h"
-#include "pipe.h"
+#include "pipes.h"
 
 
 void kmain(void) {

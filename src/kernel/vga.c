@@ -333,3 +333,18 @@ bool klog(const char* format, ...) {
 void putpixel(uint8_t color, size_t x, size_t y) {
     VGA[y * WIDTH + x] = color; 
 }
+/* Begin Flappy Bird graphical functions */
+void putpixelmatrix(uint16_t begin_x, uint16_t begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix) {
+    uint32_t index = 0;
+    for (uint16_t y = begin_y;y<begin_y+size_y; y++) {
+        for (uint16_t x = begin_x;x<begin_x+size_x;x++) {
+            if (x > VGA_WIDTH||y > VGA_HEIGHT) {index++;continue;}
+            
+            if ( *(matrix+index) == nowrite_byte) {index++;continue;}
+            *(VGA+(y*VGA_WIDTH)+x) = *(matrix+index);
+            //*(matrix+y*size_x+x);
+            index++;
+        }
+    }
+    
+}
