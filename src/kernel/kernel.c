@@ -22,14 +22,20 @@ void kmain(void) {
     //TEST_INTERRUPT(1)
 
     struct Bird bird = bird_init();
+    
     pipes_init();
-
+    klog("Flappy Bird is ready, S to start");
+    bool started = false;
     bool pressed = false;
     uint64_t t = 0;
     while (true) {
+
         if (tick() != t) {
             t = tick();
-
+            if (!started && key_pressed(KEY_S)) {
+                started = true;
+            } 
+            if (!started) continue;
             if (key_pressed(KEY_SPACE)) {
                 if (!pressed) {
                     bird_flap(&bird);

@@ -89,8 +89,8 @@ struct Bird bird_init() {
 
     bird.size =  (vec2_t) {sizeof(midflap[0]) / sizeof(midflap[0][0]), sizeof(midflap) / sizeof(midflap[0])};
     bird.pos =   (vec2_t) {VGA_WIDTH / 2, bird.size.y};
-    bird.vel =   VEC2_ZERO;
-    bird.acc =   VEC2_ZERO;
+    bird.vel =   FVEC2_ZERO;
+    bird.acc =   FVEC2_ZERO;
     bird.frame = FLAP_MIDDLE;
 
     return bird;
@@ -109,13 +109,17 @@ void bird_draw(struct Bird* bird, uint64_t tick) {
         (uint8_t*)upflap 
     );
 
-    bird->acc.y += 1;
+    bird->acc.y += .3f;
     bird->vel.y += bird->acc.y;
-    bird->pos.y += bird->vel.y;
+    bird->pos.y += roundToInt(bird->vel.y);
+    if (bird->pos.y < 0) {
+        bird->pos.y = 0;
+        bird->vel.y = 0;
+    }
     bird->acc.y = 0;
 }
 
 void bird_flap(struct Bird* bird) {
     bird->acc.y = 0;
-    bird->vel.y = -13;
+    bird->vel.y = -6;
 }

@@ -18,10 +18,10 @@ typedef uint32_t uintptr_t;
 typedef struct {
     int x, y;
 } vec2_t;
-//typedef struct {
-//    float x,y;
-//} fvec2_t;
-
+typedef struct {
+    float x,y;
+} fvec2_t;
+#define FVEC2_ZERO (fvec2_t){0,0}
 #define VEC2_ZERO (vec2_t) {0, 0}
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
@@ -33,7 +33,10 @@ typedef struct {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
-
+static inline int roundToInt(float dec) {
+    if (dec-(int)dec >= 0.5f) return (int)dec+1;
+    else return (int)dec;
+} 
 static inline void *memset(void *s, int c, size_t n) {
 	const unsigned char uc = c;
 	unsigned char *su = (unsigned char *)s;

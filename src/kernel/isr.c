@@ -101,6 +101,6 @@ void irq_handler(registers_t r) {
 
 void irq_init() {
     asm volatile("sti");
-    timer_init(30); // 30 TPS (or FPS depending on how you look at it)
+    timer_init(TIMER_TPS);
     keyboard_init();
 }
