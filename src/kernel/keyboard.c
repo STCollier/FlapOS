@@ -3,15 +3,26 @@
 #include "vga.h"
 #include "keyboard.h"
 
-static void key_callback(registers_t regs) {
-    enum Scancode key = inb(0x60);
+struct Keyboard keyboard;
 
-    if (key == SPACE) {
-        klog("Pressed space!");
+static void key_callback(registers_t regs) {
+    uint8_t scancode = inb(0x60);
+
+    if (scancode & 0x80) {
+        // Release
+        scancode &= 0x7F;
+        keyboard.keys[scancode] = false;
+    } else {
+        // Press
+        keyboard.keys[scancode] = true;
     }
 }
 
 void keyboard_init() {
     register_interrupt_handler(IRQ1, key_callback);
+    memset(keyboard.keys, false, 64);
 }
 
+bool key_pressed(enum Scancode key) {
+    return keyboard.keys[key];
+}

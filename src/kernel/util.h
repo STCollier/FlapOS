@@ -16,6 +16,12 @@ typedef uint32_t uintptr_t;
 #define WIDTH 320
 #define HEIGHT 200
 
+typedef struct {
+    int x, y;
+} vec2_t;
+
+#define VEC2_ZERO (vec2_t) {0, 0}
+
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)
 
@@ -107,5 +113,20 @@ static inline uint8_t inportb(uint16_t port) {
 static inline void io_wait(void) {
     outb(0x80, 0);
 }
+
+static inline uint32_t rand(uint32_t seed) {
+    static uint32_t x = 123456789;
+    static uint32_t y = 362436069;
+    static uint32_t z = 521288629;
+    static uint32_t w = 88675123;
+
+    x *= 23786259 - seed;
+
+    uint32_t t;
+
+    t = x ^ (x << 11);
+    x = y; y = z; z = w;
+    return w = w ^ (w >> 19) ^ t ^ (t >> 8);
+};
 
 #endif

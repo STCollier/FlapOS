@@ -2,7 +2,9 @@
 #include "vga.h"
 #include "isr.h"
 #include "timer.h"
+#include "keyboard.h"
 #include "bird.h"
+#include "pipe.h"
 
 
 void kmain(void) {
@@ -11,23 +13,36 @@ void kmain(void) {
     
     klog("Kernel loaded.");
     
-    klog("Load ISR.");
+    //klog("Load ISR.");
     isr_init();
 
-    klog("Load IRQ.");
+    //klog("Load IRQ.");
     irq_init();
 
-    TEST_INTERRUPT(1)
+    //TEST_INTERRUPT(1)
 
-    int x = 0;
+    struct Bird bird = bird_init();
+    pipes_init();
+
+    bool pressed = false;
     uint64_t t = 0;
     while (true) {
         if (tick() != t) {
             t = tick();
 
-            if (t % 5 == 0) {
-                bird_draw(x++ % 3);
+            if (key_pressed(KEY_SPACE)) {
+                if (!pressed) {
+                    bird_flap(&bird);
+                    pressed = true;
+                }
+            } else {
+                pressed = false;
             }
+
+            memset(VGA, 0, WIDTH * HEIGHT);
+
+            bird_draw(&bird, t);
+            pipes_draw(t);
 
             //klog("Tick: %d", t);
         }

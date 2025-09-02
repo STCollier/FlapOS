@@ -167,6 +167,18 @@ void VGA_setPalette() {
     VGA_setColor(5, 53, 57, 51); 
     VGA_setColor(6, 62, 13, 0); 
     VGA_setColor(7, 56, 32, 10); 
+
+    VGA_setColor(8, 21, 13, 17); 
+    VGA_setColor(9, 48, 56, 29); 
+    VGA_setColor(10, 50, 57, 30); 
+    VGA_setColor(11, 52, 59, 31); 
+    VGA_setColor(12, 55, 61, 33); 
+    VGA_setColor(13, 57, 63, 35); 
+    VGA_setColor(14, 43, 51, 24); 
+    VGA_setColor(15, 37, 45, 20); 
+    VGA_setColor(16, 33, 42, 17); 
+    VGA_setColor(17, 28, 38, 12); 
+    VGA_setColor(18, 21, 32, 7); 
 }
 
 static size_t KPRINTF_CURRENT_X = 0;

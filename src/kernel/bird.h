@@ -7,6 +7,13 @@ enum FlapState {
     FLAP_UP
 };
 
-void bird_draw(enum FlapState frame);
+struct Bird {
+    vec2_t pos, vel, acc, size;
+    enum FlapState frame;
+};
+
+struct Bird bird_init();
+void bird_draw(struct Bird* bird, uint64_t tick);
+void bird_flap(struct Bird* bird);
 
 #endif

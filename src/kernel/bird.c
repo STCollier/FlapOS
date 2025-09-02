@@ -83,13 +83,40 @@ static const uint8_t upflap[24][34] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 }; 
 
-void bird_draw(enum FlapState frame) {
+
+struct Bird bird_init() {
+    struct Bird bird;
+
+    bird.size =  (vec2_t) {sizeof(midflap[0]) / sizeof(midflap[0][0]), sizeof(midflap) / sizeof(midflap[0])};
+    bird.pos =   (vec2_t) {WIDTH / 2, bird.size.y};
+    bird.vel =   VEC2_ZERO;
+    bird.acc =   VEC2_ZERO;
+    bird.frame = FLAP_MIDDLE;
+
+    return bird;
+}
+
+static size_t counter = 0;
+
+void bird_draw(struct Bird* bird, uint64_t tick) {
+    if (!(tick % 3)) {
+        bird->frame = (int[]){0, 1, 2, 1}[counter++ % 4];
+    }
+
     for (int y = 0; y < 24; y++) {
         for (int x = 0; x < 34; x++) {
-            putpixel(frame == FLAP_DOWN   ? downflap[y][x] : 
-                     frame == FLAP_MIDDLE ? midflap[y][x] :
-                                       upflap[y][x], 
-                    100 + x, 100 + y);
+            putpixel(bird->frame == FLAP_DOWN ? downflap[y][x] : bird->frame == FLAP_MIDDLE ? midflap[y][x] : upflap[y][x], 
+                     bird->pos.x + x - bird->size.x / 2, bird->pos.y + y - bird->size.y / 2);
         }
     }
+
+    bird->acc.y += 2;
+    bird->vel.y += bird->acc.y;
+    bird->pos.y += bird->vel.y;
+    bird->acc.y = 0;
+}
+
+void bird_flap(struct Bird* bird) {
+    bird->acc.y = 0;
+    bird->vel.y = -13;
 }
