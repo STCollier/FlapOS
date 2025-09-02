@@ -44,4 +44,4 @@ os:
 qemu:
 	qemu-system-i386 -drive format=raw,file=$(OUT)/os.bin \
 		-qmp unix:./qmp-sock,server,wait=off \
-		-d guest_errors,cpu_reset
+		-d guest_errors,cpu_reset 

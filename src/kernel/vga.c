@@ -187,8 +187,8 @@ static bool FILLED_SCREEN = false;
 static const bool ENABLE_SCROLLING = false;
 
 static void checkwrap() {
-    size_t maxw = WIDTH / 8;
-    size_t maxh = HEIGHT / (8 + 2);
+    size_t maxw = VGA_WIDTH / 8;
+    size_t maxh = VGA_HEIGHT / (8 + 2);
 
     if (KPRINTF_CURRENT_X == maxw) {
         KPRINTF_CURRENT_X = 0;
@@ -221,7 +221,7 @@ void kprintc(char c, size_t x, size_t y) {
     for (size_t yy = 0; yy < 8; yy++) {
         for (size_t xx = 0; xx < 8; xx++) {
             if (glyph[yy] & (1 << xx)) {
-                VGA[(y + yy) * WIDTH + (x + xx)] = 0xF; 
+                VGA[(y + yy) * VGA_WIDTH + (x + xx)] = 0xF; 
             }
         }
     }
@@ -331,14 +331,14 @@ bool klog(const char* format, ...) {
 }
 
 void putpixel(uint8_t color, size_t x, size_t y) {
-    VGA[y * WIDTH + x] = color; 
+    VGA[y * VGA_WIDTH + x] = color; 
 }
 /* Begin Flappy Bird graphical functions */
 void putpixelmatrix(uint16_t begin_x, uint16_t begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix) {
     uint32_t index = 0;
     for (uint16_t y = begin_y;y<begin_y+size_y; y++) {
         for (uint16_t x = begin_x;x<begin_x+size_x;x++) {
-            if (x > VGA_WIDTH||y > VGA_HEIGHT) {index++;continue;}
+            if (x >= VGA_WIDTH||y >= VGA_HEIGHT || (int)x<0 || (int)y<0) {index++;continue;}
             
             if ( *(matrix+index) == nowrite_byte) {index++;continue;}
             *(VGA+(y*VGA_WIDTH)+x) = *(matrix+index);

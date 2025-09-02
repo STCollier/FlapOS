@@ -88,7 +88,7 @@ struct Bird bird_init() {
     struct Bird bird;
 
     bird.size =  (vec2_t) {sizeof(midflap[0]) / sizeof(midflap[0][0]), sizeof(midflap) / sizeof(midflap[0])};
-    bird.pos =   (vec2_t) {WIDTH / 2, bird.size.y};
+    bird.pos =   (vec2_t) {VGA_WIDTH / 2, bird.size.y};
     bird.vel =   VEC2_ZERO;
     bird.acc =   VEC2_ZERO;
     bird.frame = FLAP_MIDDLE;
@@ -102,15 +102,14 @@ void bird_draw(struct Bird* bird, uint64_t tick) {
     if (!(tick % 3)) {
         bird->frame = (int[]){0, 1, 2, 1}[counter++ % 4];
     }
+    putpixelmatrix(
+        bird->pos.x, bird->pos.y, bird->size.x, bird->size.y, 0,
+        bird->frame == FLAP_DOWN ? (uint8_t*)downflap :
+        bird->frame == FLAP_MIDDLE?(uint8_t*)midflap :
+        (uint8_t*)upflap 
+    );
 
-    for (int y = 0; y < 24; y++) {
-        for (int x = 0; x < 34; x++) {
-            putpixel(bird->frame == FLAP_DOWN ? downflap[y][x] : bird->frame == FLAP_MIDDLE ? midflap[y][x] : upflap[y][x], 
-                     bird->pos.x + x - bird->size.x / 2, bird->pos.y + y - bird->size.y / 2);
-        }
-    }
-
-    bird->acc.y += 2;
+    bird->acc.y += 1;
     bird->vel.y += bird->acc.y;
     bird->pos.y += bird->vel.y;
     bird->acc.y = 0;

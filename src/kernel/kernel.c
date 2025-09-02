@@ -9,7 +9,7 @@
 
 void kmain(void) {
     VGA_setPalette();
-    memset(VGA, 0, WIDTH * HEIGHT);
+    memset(VGA, 0, VGA_WIDTH*VGA_HEIGHT);
     
     klog("Kernel loaded.");
     
@@ -39,12 +39,10 @@ void kmain(void) {
                 pressed = false;
             }
 
-            memset(VGA, 0, WIDTH * HEIGHT);
+            memset(VGA, 0, VGA_WIDTH*VGA_HEIGHT);
 
             bird_draw(&bird, t);
             pipes_draw(t);
-
-            //klog("Tick: %d", t);
         }
     }
 }

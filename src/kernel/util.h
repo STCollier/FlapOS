@@ -13,12 +13,14 @@ typedef uint32_t uintptr_t;
 #define outb outportb
 #define inb  inportb
 
-#define WIDTH 320
-#define HEIGHT 200
+
 
 typedef struct {
     int x, y;
 } vec2_t;
+//typedef struct {
+//    float x,y;
+//} fvec2_t;
 
 #define VEC2_ZERO (vec2_t) {0, 0}
 

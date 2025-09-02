@@ -125,6 +125,6 @@ void pipes_draw(uint64_t tick) {
             }
         }
 
-        if (PIPES[i].x < WIDTH) PIPES[i].x += 5;
+        if (PIPES[i].x < VGA_WIDTH) PIPES[i].x += 5;
     }
 }
