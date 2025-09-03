@@ -104,32 +104,28 @@ static const uint8_t pipe[100][52] = {
     { 0, 0, 8, 8, 16, 16, 15, 15, 14, 14, 14, 14, 9, 9, 11, 11, 12, 12, 13, 13, 12, 12, 11, 11, 9, 9, 14, 14, 14, 14, 15, 15, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 8, 8, 0, 0 }
 }; 
 
-static struct Pipes PIPES[1];
+static struct Pipes PIPES[3];
 
 void pipes_init() {
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) {
         PIPES[i] = (struct Pipes) {
-            .x = 7 + i * 100,
+            .x = i * 125,
             .offset = rand(i*1234) % 75
         };
     }
 }
-uint32_t drawtick = 0;
 void pipes_draw(uint64_t tick) {
-    drawtick++;
-    for (uint64_t i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) { // num pipes
+    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) { // num pipes
         for (int j = 0; j < 2; j++) { // top and bottom
             for (int y = 0; y < 100; y++) {
                 for (int x = 0; x < 52; x++) {
-                    putpixel(pipe[j ? y : 99 - y][x], PIPES[i].x + x, j ? 175 + y - PIPES[i].offset : y - PIPES[i].offset);
+                    putpixel(pipe[j ? y : 99 - y][x], PIPES[i].x + x, j ? 180 + y - PIPES[i].offset : y - PIPES[i].offset);
                 }
             }
         }
-        // obviously not the best solution. this needs reworking atm, we need to stop drawing it after the VGA borders. I can work on an impl for upside down pictures as well but im now out of time.
-        if (PIPES[i].x > 0) PIPES[i].x -= 5;
-        else {
-            PIPES[i].x = VGA_WIDTH;
-            PIPES[i].offset = rand(drawtick*1234) % 75;
-        }
+
+
+        if (PIPES[i].x >= -52) PIPES[i].x -= 2; // loop back over screen
+        else PIPES[i].x = VGA_WIDTH;
     }
 }

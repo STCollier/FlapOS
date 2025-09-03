@@ -13,22 +13,22 @@ typedef uint32_t uintptr_t;
 #define outb outportb
 #define inb  inportb
 
-
-
 typedef struct {
     int x, y;
 } vec2_t;
+
 typedef struct {
     float x,y;
 } fvec2_t;
-#define FVEC2_ZERO (fvec2_t){0,0}
+
+#define FVEC2_ZERO (fvec2_t){0 , 0}
 #define VEC2_ZERO (vec2_t) {0, 0}
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)
 
 #define TEST_INTERRUPT(x) \
-    klog("Call interrupt %d.", x); \
+    klog("[DEBUG] Call interrupt %d.", x); \
     __asm__ volatile("int %0" :: "i"(x));
 
 #pragma GCC diagnostic push

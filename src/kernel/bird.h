@@ -9,7 +9,7 @@ enum FlapState {
 
 struct Bird {
     vec2_t pos, size;
-    fvec2_t vel,acc;
+    fvec2_t vel, acc;
     enum FlapState frame;
 };
 

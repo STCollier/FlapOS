@@ -9,22 +9,23 @@
 
 void kmain(void) {
     VGA_setPalette();
-    memset(VGA, 0, VGA_WIDTH*VGA_HEIGHT);
     
     klog("Kernel loaded.");
     
-    //klog("Load ISR.");
+    klog("Load ISR.");
     isr_init();
 
-    //klog("Load IRQ.");
+    klog("Load IRQ.");
     irq_init();
 
-    //TEST_INTERRUPT(1)
+    TEST_INTERRUPT(1)
 
     struct Bird bird = bird_init();
     
     pipes_init();
-    klog("Flappy Bird is ready, S to start");
+    klog("Ready. Press [S] to run.");
+
+        VGA_swap();
     bool started = false;
     bool pressed = false;
     uint64_t t = 0;
@@ -34,7 +35,7 @@ void kmain(void) {
             t = tick();
             if (!started && key_pressed(KEY_S)) {
                 started = true;
-            } 
+            }
             if (!started) continue;
             if (key_pressed(KEY_SPACE)) {
                 if (!pressed) {
@@ -45,10 +46,12 @@ void kmain(void) {
                 pressed = false;
             }
 
-            memset(VGA, 0, VGA_WIDTH*VGA_HEIGHT);
+            VGA_clear();
 
             bird_draw(&bird, t);
             pipes_draw(t);
+
+            VGA_swap();
         }
     }
 }

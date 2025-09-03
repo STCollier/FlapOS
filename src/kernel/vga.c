@@ -4,6 +4,10 @@
 
 uint8_t* VGA = (uint8_t*) 0xA0000;
 
+// (very safe trust)
+static uint8_t* BUFFER = (uint8_t*) 0x20000; 
+static bool SWAP = 0;
+
 static const uint8_t FONT[128][8] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0000 (nul)
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // U+0001
@@ -147,6 +151,15 @@ The accessed DAC entry will automatically increment after every three bytes writ
 NOTE: colors are in the range [0, 63]
 */
 
+void VGA_swap() {
+    memcpy(VGA, BUFFER, VGA_SIZE);
+}
+
+void VGA_clear() {
+    memset(BUFFER, 0, VGA_SIZE);
+}
+
+
 void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
     // TODO: assert impl
     // assert(idx < 256 && r < 64 && g < 64 && b < 64);
@@ -179,6 +192,8 @@ void VGA_setPalette() {
     VGA_setColor(16, 33, 42, 17); 
     VGA_setColor(17, 28, 38, 12); 
     VGA_setColor(18, 21, 32, 7); 
+
+    VGA_setColor(255, 63, 63, 63); // white
 }
 
 static size_t KPRINTF_CURRENT_X = 0;
@@ -203,8 +218,8 @@ static void checkwrap() {
 
         while (KPRINTF_CURRENT_Y != maxh) {
             memcpy(
-                VGA+((40*8) * (KPRINTF_CURRENT_Y*10)),
-                VGA+((40*8) * ((KPRINTF_CURRENT_Y+1)*10)),
+                BUFFER+((40*8) * (KPRINTF_CURRENT_Y*10)),
+                BUFFER+((40*8) * ((KPRINTF_CURRENT_Y+1)*10)),
                 40*8*10
             );
             KPRINTF_CURRENT_Y++;
@@ -221,7 +236,7 @@ void kprintc(char c, size_t x, size_t y) {
     for (size_t yy = 0; yy < 8; yy++) {
         for (size_t xx = 0; xx < 8; xx++) {
             if (glyph[yy] & (1 << xx)) {
-                VGA[(y + yy) * VGA_WIDTH + (x + xx)] = 0xF; 
+                BUFFER[(y + yy) * VGA_WIDTH + (x + xx)] = 0xFF; 
             }
         }
     }
@@ -331,18 +346,19 @@ bool klog(const char* format, ...) {
 }
 
 void putpixel(uint8_t color, size_t x, size_t y) {
-    VGA[y * VGA_WIDTH + x] = color; 
+    if (x < VGA_WIDTH && y < VGA_HEIGHT) BUFFER[y * VGA_WIDTH + x] = color; 
 }
 /* Begin Flappy Bird graphical functions */
 void putpixelmatrix(int begin_x, int begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix) {
     uint32_t index = 0;
-    for (int y = begin_y;y<begin_y+size_y; y++) {
+    for (int y = begin_y; y < begin_y + size_y; y++) {
         //if (y < 0) continue;
         for (int x = begin_x;x<begin_x+size_x;x++) {
             if (x >= VGA_WIDTH||y >= VGA_HEIGHT || x<0 || y<0){index++;continue;}
             if (index > 10000) return;
+
             if ( *(matrix+index) == nowrite_byte) {index++;continue;}
-            *(VGA+(y*VGA_WIDTH)+x) = *(matrix+index);
+            *(BUFFER+(y*VGA_WIDTH)+x) = *(matrix+index);
             //*(matrix+y*size_x+x);
             index++;
         }

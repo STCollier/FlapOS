@@ -104,9 +104,9 @@ void bird_draw(struct Bird* bird, uint64_t tick) {
     }
     putpixelmatrix(
         bird->pos.x, bird->pos.y, bird->size.x, bird->size.y, 0,
-        bird->frame == FLAP_DOWN ? (uint8_t*)downflap :
-        bird->frame == FLAP_MIDDLE?(uint8_t*)midflap :
-        (uint8_t*)upflap 
+        bird->frame == FLAP_DOWN ? (uint8_t*) downflap :
+        bird->frame == FLAP_MIDDLE?(uint8_t*) midflap :
+        (uint8_t*) upflap 
     );
 
     bird->acc.y += .3f;
@@ -121,5 +121,5 @@ void bird_draw(struct Bird* bird, uint64_t tick) {
 
 void bird_flap(struct Bird* bird) {
     bird->acc.y = 0;
-    bird->vel.y = -6;
+    bird->vel.y = -5;
 }
