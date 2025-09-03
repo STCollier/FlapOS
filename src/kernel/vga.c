@@ -255,6 +255,32 @@ void kprintc(char c, size_t x, size_t y, uint8_t color) {
     }
 }
 
+void Lkprintc(char c, size_t x, size_t y, uint8_t color) {
+    const unsigned char *glyph = FONT[(size_t)c];
+
+    for (size_t yy = 0; yy < 8; yy++) {
+        for (size_t xx = 0; xx < 8; xx++) {
+            if (glyph[yy] & (1 << xx)) {
+                size_t px = x + (xx * 2);
+                size_t py = y + (yy * 2);
+
+                BUFFER[(py)     * VGA_WIDTH + (px)]     = color;
+                BUFFER[(py)     * VGA_WIDTH + (px + 1)] = color;
+                BUFFER[(py + 1) * VGA_WIDTH + (px)]     = color;
+                BUFFER[(py + 1) * VGA_WIDTH + (px + 1)] = color;
+            }
+        }
+    }
+}
+
+void Lkprints(const char* str, size_t x, size_t y, uint8_t color) {
+    size_t s = 0, ss = 0;
+    while(*str) {
+        if (*str == 10) ss++, s = -1;
+        Lkprintc(*str++, x + s++*16, y + ss*16, color);
+    }
+}
+
 void kprints(const char* str, size_t x, size_t y, uint8_t color) {
     size_t s = 0, ss = 0;
     while(*str) {

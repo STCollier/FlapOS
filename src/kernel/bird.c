@@ -47,7 +47,6 @@ static const uint8_t upflap[12][17] = {
     { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 }
 }; 
 
-
 struct Bird bird_init() {
     struct Bird bird;
 
