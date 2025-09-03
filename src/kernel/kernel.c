@@ -44,12 +44,17 @@ void kmain(void) {
             t = tick();
             
             if (scene == SCENE_LOAD) {
-                if (key_pressed(KEY_S)) scene = SCENE_MENU;
+                if (key_pressed(KEY_S)) {scene = SCENE_MENU; continue;}
             }
 
             if (scene == SCENE_MENU) {
-                kprints("FLAPPY BIRD", 160-88, 16, 255);
+               
                 //kprints("FLAPPY BIRD", 160-88, 16, 255); // try uncommenting
+                //if (key_pressed(KEY_SPACE)) {scene=SCENE_GAME;continue;}
+                kprints("FLAPPY BIRD (space to start)", 160-88, 16, 255);
+                __asm__ volatile ("nop;nop;nop;nop;nop;nop;nop;nop;nop;nop;nop");
+                
+                 
             }
 
             if (scene == SCENE_GAME) {
@@ -59,14 +64,13 @@ void kmain(void) {
                         pressed = true;
                     }
                 } else pressed = false;
-
                 bird_draw(&bird, t);
                 pipes_draw(t);
                 bird_drawScore(t);
             }
 
             VGA_swap();
-            if (scene != SCENE_LOAD) VGA_clear();
-        }
+            if (scene == SCENE_GAME) VGA_clear(); 
+          }
     }
 }

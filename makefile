@@ -3,7 +3,7 @@ CC=
 LD=
 OUT=./bin
 ifeq ($(UNAME_S),Linux)
-CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -g -Wall -Wextra -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter\
+CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -Wall -Wextra -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter\
          -fno-exceptions -nostdlib -nostdinc -fno-stack-protector \
          -fno-builtin-function -fno-builtin 
 CC=i386-elf-gcc
@@ -35,8 +35,7 @@ os:
 	@echo "Full image at $(OUT)/os.bin"
 qemu:
 	qemu-system-i386 -drive format=raw,file=$(OUT)/os.bin \
-		-qmp unix:./qmp-sock,server,wait=off \
-		-d guest_errors,cpu_reset 
+		-qmp unix:./qmp-sock,server,wait=off  
 
 endif
 

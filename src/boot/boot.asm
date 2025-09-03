@@ -20,22 +20,18 @@
     xor ch, ch              ; cylinder pos
     ; sector # is set already
     ; head num set already
+  mov [DL_AT_BOOT], dl
+
+    ; begin 13h
+    mov ah, 2               ; read command
+    mov al, KERNEL_SIZE     ; kernel sector count
+    xor ch, ch              ; cylinder pos
+    mov cl, 2               ; sector 2 is the start sector (the one after bootsector)
+    xor dh, dh              ; head number
     mov dl, [DL_AT_BOOT]
     
-    
-    int 13h
-    add bx, 512
-    inc cl
-    cmp dh, 3 
-    je end 
-    cmp cl, 64
-    je switch_head 
-    jmp load
-    switch_head:
-      mov esp, 1
-      inc dh
-      jmp load
-    end:
+    mov bx, KERNEL_POSITION ; destination address
+    int 13h 
     ; set video mode 13h (320x200x256)
     mov ah, 0x00
     mov al, 0x13
