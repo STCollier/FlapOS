@@ -102,7 +102,8 @@ run:
 	cat ./bin/bootloader.bin ./bin/kernel.bin > ./bin/os.bin
 	qemu-system-x86_64 -drive format=raw,file=./bin/os.bin \
 		-qmp unix:./qmp-sock,server,wait=off \
-		-d guest_errors,cpu_reset
+		-d guest_errors,cpu_reset \
+
 
 clean:
 	rm -rf ./bin

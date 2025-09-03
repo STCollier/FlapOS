@@ -157,11 +157,9 @@ void VGA_swap() {
 
 void VGA_clear() {
     for (int i = 0; i < 5; i++) {
-        memset(BUFFER + VGA_HEIGHT * 40 * i, i + 19, VGA_SIZE);   
+        memset(BUFFER + VGA_HEIGHT * 40 * i, i + 23, VGA_SIZE);   
     }
- 
 }
-
 
 void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
     // TODO: assert impl
@@ -184,23 +182,27 @@ void VGA_setPalette() {
     VGA_setColor(6, 62, 13, 0); 
     VGA_setColor(7, 56, 32, 10); 
 
-    VGA_setColor(8, 21, 13, 17); 
-    VGA_setColor(9, 48, 56, 29); 
-    VGA_setColor(10, 50, 57, 30); 
-    VGA_setColor(11, 52, 59, 31); 
+    VGA_setColor(8, 21, 14, 18); 
+    VGA_setColor(9, 48, 55, 28); 
+    VGA_setColor(10, 50, 57, 29); 
+    VGA_setColor(11, 52, 58, 31); 
     VGA_setColor(12, 55, 61, 33); 
-    VGA_setColor(13, 57, 63, 35); 
-    VGA_setColor(14, 43, 51, 24); 
-    VGA_setColor(15, 37, 45, 20); 
-    VGA_setColor(16, 33, 42, 17); 
-    VGA_setColor(17, 28, 38, 12); 
-    VGA_setColor(18, 21, 32, 7); 
+    VGA_setColor(13, 45, 52, 26); 
+    VGA_setColor(14, 41, 49, 23); 
+    VGA_setColor(15, 37, 46, 20);
+    VGA_setColor(16, 37, 45, 20); 
+    VGA_setColor(17, 33, 42, 17); 
+    VGA_setColor(18, 27, 37, 13); 
+    VGA_setColor(19, 21, 32, 9); 
+    VGA_setColor(20, 48, 56, 28); 
+    VGA_setColor(21, 33, 42, 17); 
+    VGA_setColor(22, 51, 58, 31); 
 
-    VGA_setColor(19, 40, 50, 50);
-    VGA_setColor(20, 35, 50, 50);
-    VGA_setColor(21, 30, 50, 50);
-    VGA_setColor(22, 25, 49, 50);
-    VGA_setColor(23, 20, 48, 50);
+    VGA_setColor(23, 40, 50, 50);
+    VGA_setColor(24, 35, 50, 50);
+    VGA_setColor(25, 30, 50, 50);
+    VGA_setColor(26, 25, 49, 50);
+    VGA_setColor(27, 20, 48, 50);
 
     
     VGA_setColor(254, 0, 0, 0); // black
