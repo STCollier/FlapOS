@@ -361,17 +361,17 @@ void putpixel(uint8_t color, size_t x, size_t y) {
 }
 
 /* Begin Flappy Bird graphical functions */
-void putpixelmatrix(int begin_x, int begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix) {
+void putpixelmatrix(vec2_t begin, vec2_t size, uint8_t nowrite_byte, uint8_t *matrix) {
     uint32_t index = 0;
-    for (int y = begin_y; y < begin_y + size_y; y++) {
+    for (int y = begin.y; y < begin.y + size.y; y++) {
         //if (y < 0) continue;
-        for (int x = begin_x;x<begin_x+size_x;x++) {
+        for (int x = begin.x;x<begin.x+size.x;x++) {
             if (x >= VGA_WIDTH||y >= VGA_HEIGHT || x<0 || y<0){index++;continue;}
             if (index > 10000) return;
 
             if ( *(matrix+index) == nowrite_byte) {index++;continue;}
             *(BUFFER+(y*VGA_WIDTH)+x) = *(matrix+index);
-            //*(matrix+y*size_x+x);
+            //*(matrix+y*size.x+x);
             index++;
         }
         

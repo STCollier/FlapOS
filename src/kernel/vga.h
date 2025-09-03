@@ -19,6 +19,6 @@ bool kprintf(const char *format, ...);
 bool klog(const char *format, ...);
 
 void putpixel(uint8_t color, size_t x, size_t y);
-void putpixelmatrix(int begin_x, int begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix);
+void putpixelmatrix(vec2_t begin, vec2_t size, uint8_t nowrite_byte, uint8_t *matrix);
 // positions can be negative in some cases, we cant leave X and Y as uints as a result.
 #endif

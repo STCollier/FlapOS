@@ -103,7 +103,7 @@ void bird_draw(struct Bird* bird, uint64_t tick) {
         bird->frame = (int[]){0, 1, 2, 1}[counter++ % 4];
     }
     putpixelmatrix(
-        bird->pos.x, bird->pos.y, bird->size.x, bird->size.y, 0,
+        bird->pos, bird->size, 0,
         bird->frame == FLAP_DOWN ? (uint8_t*) downflap :
         bird->frame == FLAP_MIDDLE?(uint8_t*) midflap :
         (uint8_t*) upflap 
