@@ -123,3 +123,12 @@ void bird_flap(struct Bird* bird) {
     bird->acc.y = 0;
     bird->vel.y = -5;
 }
+
+static  char score[9];
+void bird_drawScore(uint64_t tick) {
+    kprints("Score: ", 6, 6, 0xFE);
+    kprints("Score: ", 5, 5, 0xFF);
+
+    kprints(itoa(tick, score, 10), 56, 6, 0xFE);
+    kprints(itoa(tick, score, 10), 55, 5, 0xFF);
+}

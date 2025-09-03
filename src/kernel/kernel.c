@@ -25,7 +25,7 @@ void kmain(void) {
     pipes_init();
     klog("Ready. Press [S] to run.");
 
-        VGA_swap();
+    VGA_swap();
     bool started = false;
     bool pressed = false;
     uint64_t t = 0;
@@ -50,6 +50,7 @@ void kmain(void) {
 
             bird_draw(&bird, t);
             pipes_draw(t);
+            bird_drawScore(t);
 
             VGA_swap();
         }

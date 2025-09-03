@@ -156,7 +156,10 @@ void VGA_swap() {
 }
 
 void VGA_clear() {
-    memset(BUFFER, 0, VGA_SIZE);
+    for (int i = 0; i < 5; i++) {
+        memset(BUFFER + VGA_HEIGHT * 40 * i, i + 19, VGA_SIZE);   
+    }
+ 
 }
 
 
@@ -193,6 +196,14 @@ void VGA_setPalette() {
     VGA_setColor(17, 28, 38, 12); 
     VGA_setColor(18, 21, 32, 7); 
 
+    VGA_setColor(19, 40, 50, 50);
+    VGA_setColor(20, 35, 50, 50);
+    VGA_setColor(21, 30, 50, 50);
+    VGA_setColor(22, 25, 49, 50);
+    VGA_setColor(23, 20, 48, 50);
+
+    
+    VGA_setColor(254, 0, 0, 0); // black
     VGA_setColor(255, 63, 63, 63); // white
 }
 
@@ -230,23 +241,23 @@ static void checkwrap() {
 
 }
 
-void kprintc(char c, size_t x, size_t y) {
+void kprintc(char c, size_t x, size_t y, uint8_t color) {
     const unsigned char *glyph = FONT[(size_t) c];
 
     for (size_t yy = 0; yy < 8; yy++) {
         for (size_t xx = 0; xx < 8; xx++) {
             if (glyph[yy] & (1 << xx)) {
-                BUFFER[(y + yy) * VGA_WIDTH + (x + xx)] = 0xFF; 
+                BUFFER[(y + yy) * VGA_WIDTH + (x + xx)] = color; 
             }
         }
     }
 }
 
-void kprints(const char* str, size_t x, size_t y) {
+void kprints(const char* str, size_t x, size_t y, uint8_t color) {
     size_t s = 0, ss = 0;
     while(*str) {
         if (*str == 10) ss++, s = -1;
-        kprintc(*str++, x + s++*8, y + ss*10);
+        kprintc(*str++, x + s++*8, y + ss*10, color);
     }
 }
 
@@ -258,7 +269,7 @@ static void _kprintf_kprintc(char c) {
         return;
     }
 
-    kprintc(c, KPRINTF_CURRENT_X * 8, KPRINTF_CURRENT_Y * 10);
+    kprintc(c, KPRINTF_CURRENT_X * 8, KPRINTF_CURRENT_Y * 10, 0xFF);
     KPRINTF_CURRENT_X++;
     checkwrap();
 }
@@ -346,8 +357,9 @@ bool klog(const char* format, ...) {
 }
 
 void putpixel(uint8_t color, size_t x, size_t y) {
-    if (x < VGA_WIDTH && y < VGA_HEIGHT) BUFFER[y * VGA_WIDTH + x] = color; 
+    if (x < VGA_WIDTH && y < VGA_HEIGHT && color) BUFFER[y * VGA_WIDTH + x] = color;
 }
+
 /* Begin Flappy Bird graphical functions */
 void putpixelmatrix(int begin_x, int begin_y, uint16_t size_x, uint16_t size_y, uint8_t nowrite_byte, uint8_t *matrix) {
     uint32_t index = 0;
