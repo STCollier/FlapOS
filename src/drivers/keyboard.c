@@ -1,6 +1,6 @@
 #include "../util.h"
 #include "../interrupts/isr.h"
-#include "../bananas/vga.h"
+#include "vga.h"
 #include "keyboard.h"
 
 struct Keyboard keyboard;

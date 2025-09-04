@@ -1,5 +1,5 @@
 #include "pipes.h"
-#include "../bananas/vga.h"
+#include "../drivers/vga.h"
 
 #define PIPE_WIDTH 26
 #define PIPE_HEIGHT 100

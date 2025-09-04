@@ -1,8 +1,8 @@
 #include "../util.h"
-#include "../bananas/vga.h"
+#include "../drivers/vga.h"
 #include "../interrupts/isr.h"
 #include "../interrupts/timer.h"
-#include "../bananas/keyboard.h"
+#include "../drivers/keyboard.h"
 #include "../game/bird.h"
 #include "../game/pipes.h"
 
