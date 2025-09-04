@@ -1,4 +1,4 @@
-#include "util.h"
+#include "../util.h"
 #include "vga.h"
 #include <stdarg.h> // TODO: remove eventually with builtin impl
 

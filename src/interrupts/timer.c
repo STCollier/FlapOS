@@ -1,7 +1,7 @@
 #include "timer.h"
-#include "util.h"
+#include "../util.h"
 #include "isr.h"
-#include "vga.h"
+#include "../bananas/vga.h"
 
 static uint64_t _tick = 0;
 

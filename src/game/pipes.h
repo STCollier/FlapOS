@@ -1,7 +1,7 @@
 #ifndef PIPE_H
 #define PIPE_H
 
-#include "util.h"
+#include "../util.h"
 #include "bird.h"
 
 struct Pipes {

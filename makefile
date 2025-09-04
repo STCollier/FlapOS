@@ -29,15 +29,15 @@ bootloader:
 kernel:
 	@echo "Build kernel"
 	@mkdir -p $(OUT)/kernel
-	@nasm -f elf src/kernel/kernel.asm -o ./bin/kernel/kernel.asm.o
+	@nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernel/kernelstrap.asm.o
 	@elfs="";\
-	for file in src/kernel/*.c;\
+	for file in src/*/*.c;\
 	do \
 	    echo "Build $$file"; \
 	    $(CC) -c $(NO_SSE) $(CFLAGS) $$file -o $(OUT)/kernel/$$(basename $${file}.o) ;\
 	    elfs+="$(OUT)/kernel/$$(basename $${file}.o) "; \
 	done ;  \
-	$(LD) -o $(OUT)/kernel.bin --oformat binary -T linker.ld $(OUT)/kernel/kernel.asm.o $$elfs
+	$(LD) -o $(OUT)/kernel.bin --oformat binary -T linker.ld $(OUT)/kernel/kernelstrap.asm.o $$elfs
 os:
 	@echo "Build final OS"
 	@cat $(OUT)/boot.bin $(OUT)/kernel.bin > $(OUT)/os.bin

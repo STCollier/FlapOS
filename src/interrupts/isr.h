@@ -1,7 +1,7 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "util.h"
+#include "../util.h"
 
 #define PIC1 0x20 // IO master
 #define PIC1_OFFSET 0x20

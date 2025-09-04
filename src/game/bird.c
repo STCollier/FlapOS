@@ -1,5 +1,5 @@
-#include "vga.h"
-#include "util.h"
+#include "../bananas/vga.h"
+#include "../util.h"
 #include "bird.h"
 
 static const uint8_t downflap[12][17] = {

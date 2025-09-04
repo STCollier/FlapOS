@@ -1,13 +1,4 @@
-global _start
-
-[extern kmain]
-[extern isr_handler]
-[extern irq_handler]
-
-[bits 32]
-_start:
-    call kmain
-    jmp $
+; this doesnt need to be compiled individually, it is compiled with the kernel strap
 
 ; ISR with no error
 %macro ISR_NO_ERR 1

@@ -1,10 +1,10 @@
-#include "util.h"
-#include "vga.h"
-#include "isr.h"
-#include "timer.h"
-#include "keyboard.h"
-#include "bird.h"
-#include "pipes.h"
+#include "../util.h"
+#include "../bananas/vga.h"
+#include "../interrupts/isr.h"
+#include "../interrupts/timer.h"
+#include "../bananas/keyboard.h"
+#include "../game/bird.h"
+#include "../game/pipes.h"
 
 enum Scene {
     SCENE_LOAD,
@@ -17,7 +17,7 @@ void load() {
 }
 
 void kmain(void) {
-    enum Scene scene = SCENE_GAME;
+    enum Scene scene = SCENE_LOAD;
 
     VGA_setPalette();
     

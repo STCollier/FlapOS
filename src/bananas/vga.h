@@ -1,7 +1,7 @@
 #ifndef VGA_H
 #define VGA_H
 
-#include "util.h"
+#include "../util.h"
 
 extern uint8_t* VGA;
 

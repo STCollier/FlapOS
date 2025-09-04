@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "util.h"
+#include "../util.h"
 
 // https://wiki.osdev.org/Programmable_Interval_Timer#I/O_Ports
 #define PIT0     0x40

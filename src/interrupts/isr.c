@@ -1,9 +1,9 @@
 #include "isr.h"
-#include "util.h"
-#include "vga.h"
+#include "../util.h"
+#include "../bananas/vga.h"
 #include "idt.h"
 #include "timer.h"
-#include "keyboard.h"
+#include "../bananas/keyboard.h"
 
 isr_t interrupt_handlers[256];
 
