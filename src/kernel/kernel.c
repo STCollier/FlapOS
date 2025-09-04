@@ -17,7 +17,7 @@ void load() {
 }
 
 void kmain(void) {
-    enum Scene scene = SCENE_LOAD;
+    enum Scene scene = SCENE_GAME;
 
     VGA_setPalette();
     
@@ -37,6 +37,7 @@ void kmain(void) {
 
     bool pressed = false;
     uint64_t t = 0;
+    bool mflip = false;
 
     while (true) {
 
@@ -48,13 +49,15 @@ void kmain(void) {
             }
 
             if (scene == SCENE_MENU) {
-               
-                //kprints("FLAPPY BIRD", 160-88, 16, 255); // try uncommenting
-                //if (key_pressed(KEY_SPACE)) {scene=SCENE_GAME;continue;}
-                kprints("FLAPPY BIRD (space to start)", 160-88, 16, 255);
-                __asm__ volatile ("nop;nop;nop;nop;nop;nop;nop;nop;nop;nop;nop");
-                
-                 
+                Lkprints("FLAPPY BIRD", 160-90, 18, 253);
+                Lkprints("FLAPPY BIRD", 160-88, 16, 255);
+
+                kprints("Press [ENTER] to Play", 160-89, 151, mflip ? 252 : 251);
+                kprints("Press [ENTER] to Play", 160-88, 150, mflip ? 251 : 252);
+
+                if (!(t % 15)) mflip = !mflip;
+
+                if (key_pressed(KEY_ENTER)) scene = SCENE_GAME;
             }
 
             if (scene == SCENE_GAME) {
@@ -64,13 +67,17 @@ void kmain(void) {
                         pressed = true;
                     }
                 } else pressed = false;
+
                 bird_draw(&bird, t);
-                pipes_draw(t);
+                pipes_update(&bird, t);
+                pipes_draw();
+                
                 bird_drawScore(t);
             }
 
             VGA_swap();
-            if (scene == SCENE_GAME) VGA_clear(); 
+
+            if (scene != SCENE_LOAD) VGA_clear(); 
           }
     }
 }

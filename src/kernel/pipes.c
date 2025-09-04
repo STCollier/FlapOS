@@ -1,10 +1,10 @@
 #include "pipes.h"
 #include "vga.h"
 
-// i don't know WHY the heck this is happening but if you change this to the actual array size [100][26]
-// specifically changing the x dimension to 26 or even 27, you literally just get a blue screen
-// any other value besides the actual width (+-1) of the array works
-static const uint8_t pipe[100][30] = {
+#define PIPE_WIDTH 26
+#define PIPE_HEIGHT 100
+
+static const uint8_t pipe[PIPE_HEIGHT][PIPE_WIDTH] = {
     { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },
     { 8, 9, 10, 11, 12, 12, 12, 12, 12, 11, 12, 11, 10, 9, 13, 14, 14, 15, 16, 17, 18, 18, 18, 19, 19, 8 },
     { 8, 11, 12, 12, 12, 12, 12, 11, 10, 9, 13, 14, 14, 15, 16, 17, 18, 18, 18, 19, 19, 19, 19, 19, 19, 8 },
@@ -118,20 +118,30 @@ void pipes_init() {
     }
 }
 
-void pipes_draw(uint64_t tick) {
+void pipes_draw() {
     for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) { // num pipes
         for (int j = 0; j < 2; j++) { // top and bottom
-            for (int y = 0; y < 100; y++) {
-                for (int x = 0; x < 26; x++) {
+            for (int y = 0; y < PIPE_HEIGHT; y++) {
+                for (int x = 0; x < PIPE_WIDTH; x++) {
                     putpixel(pipe[j ? y : 99 - y][x], PIPES[i].x + x, j ? 180 + y - PIPES[i].offset : y - PIPES[i].offset);
                 }
             }
         }
+    }
+}
 
+static vec2_t PSIZE = {PIPE_WIDTH, PIPE_HEIGHT};
+void pipes_update(struct Bird* bird, uint64_t tick) {
+    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) {
+        vec2_t pt = { PIPES[i].x, -PIPES[i].offset };
+        vec2_t pb = { PIPES[i].x, 180 - PIPES[i].offset };
 
-        if (PIPES[i].x >= -26) PIPES[i].x -= 2; // loop back over screen
+        bird_checkCollision(bird, pt, PSIZE);
+        bird_checkCollision(bird, pb, PSIZE);
+
+        if (PIPES[i].x >= -PIPE_WIDTH) PIPES[i].x -= 2; // loop back over screen
         else {
-            PIPES[i].offset = rand(i*1234) % 75;
+            PIPES[i].offset = rand(tick * 1234) % 75;
             PIPES[i].x = VGA_WIDTH;
         }
     }

@@ -2,6 +2,7 @@
 #define PIPE_H
 
 #include "util.h"
+#include "bird.h"
 
 struct Pipes {
     int x;
@@ -9,6 +10,7 @@ struct Pipes {
 };
 
 void pipes_init();
-void pipes_draw(uint64_t tick);
+void pipes_draw();
+void pipes_update(struct Bird* bird, uint64_t tick);
 
 #endif

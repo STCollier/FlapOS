@@ -69,20 +69,8 @@ kernel:
 
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 
-	# First, link with symbols into ELF (for debugging)
-	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.elf -Ttext 0x1000 \
-		./bin/kernelstrap.asm.o \
-		./bin/kernel.c.o \
-		./bin/vga.c.o \
-		./bin/idt.c.o \
-		./bin/isr.c.o \
-		./bin/timer.c.o \
-		./bin/keyboard.c.o \
-		./bin/bird.c.o \
-		./bin/pipes.c.o \
-
 	# Then, make the flat binary (for booting)
-	x86_64-elf-ld -m elf_i386 -o ./bin/kernel.bin -Ttext 0x1000 \
+	x86_64-elf-ld -m elf_i386 -Tsrc/kernel/link.ld -o ./bin/kernel.bin \
 		./bin/kernelstrap.asm.o \
 		./bin/kernel.c.o \
 		./bin/vga.c.o \

@@ -16,6 +16,8 @@
 #define ICW1_ICW4 0x01
 #define ICW1_INIT 0x10
 
+#define TIMER_HZ 60
+
 #define IRQ0  32
 #define IRQ1  33
 #define IRQ2  34
@@ -146,7 +148,7 @@ typedef struct {
    uint32_t int_no, err_code; /* Interrupt number and error code (if applicable) */
    uint32_t eip, cs, eflags, useresp, ss; /* Pushed by the processor automatically */
 } registers_t;
-#define TIMER_TPS 60
+
 void isr_init();
 void isr_handler(registers_t r);
 void irq_init();

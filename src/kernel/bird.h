@@ -17,5 +17,6 @@ struct Bird bird_init();
 void bird_draw(struct Bird* bird, uint64_t tick);
 void bird_flap(struct Bird* bird);
 void bird_drawScore(uint64_t tick);
+void bird_checkCollision(struct Bird* bird, vec2_t ppos, vec2_t pdim);
 
 #endif

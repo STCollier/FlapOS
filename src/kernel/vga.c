@@ -203,8 +203,11 @@ void VGA_setPalette() {
     VGA_setColor(25, 30, 50, 50);
     VGA_setColor(26, 25, 49, 50);
     VGA_setColor(27, 20, 48, 50);
-
     
+    VGA_setColor(251, 63, 52, 30); // dark yellow
+    VGA_setColor(252, 63, 47, 20); // light yellow
+
+    VGA_setColor(253, 50, 50, 50); // gray
     VGA_setColor(254, 0, 0, 0); // black
     VGA_setColor(255, 63, 63, 63); // white
 }

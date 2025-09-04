@@ -47,6 +47,13 @@ static const uint8_t upflap[12][17] = {
     { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 }
 }; 
 
+static bool rrcollide(vec2_t pos1, vec2_t dim1, vec2_t pos2, vec2_t dim2) {
+    return  (pos1.x + dim1.x >= pos2.x &&
+            pos1.x <= pos2.x + dim2.x &&
+            pos1.y + dim1.y >= pos2.y &&
+            pos1.y <= pos2.y + dim2.y);
+}
+
 struct Bird bird_init() {
     struct Bird bird;
 
@@ -87,11 +94,19 @@ void bird_flap(struct Bird* bird) {
     bird->vel.y = -5;
 }
 
-static  char score[9];
+static char score[9];
+uint8_t c = 0xFF;
 void bird_drawScore(uint64_t tick) {
     kprints("Score: ", 6, 6, 0xFE);
-    kprints("Score: ", 5, 5, 0xFF);
+    kprints("Score: ", 5, 5, c);
 
     kprints(itoa(tick, score, 10), 56, 6, 0xFE);
     kprints(itoa(tick, score, 10), 55, 5, 0xFF);
+}
+
+void bird_checkCollision(struct Bird* bird, vec2_t ppos, vec2_t pdim) {
+    bool hit = rrcollide(bird->pos, bird->size, ppos, pdim);
+    if (hit) c = 0x0;
+    else c = 0xFF;
+
 }
