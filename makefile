@@ -28,7 +28,7 @@ kernel:
 		$(CC) -c $(CFLAGS) $$file -o $(OUT)/kernel/$$(basename $${file}.o) ;\
 		elfs+="$(OUT)/kernel/$$(basename $${file}.o) "; \
 	done ;  \
-	$(LD) -o $(OUT)/kernel.bin --oformat binary -Ttext 0x1000 $(OUT)/kernel/kernelstrap.asm.o $$elfs
+	$(LD) -o $(OUT)/kernel.bin --oformat binary -T linker.ld $(OUT)/kernel/kernelstrap.asm.o $$elfs
 os:
 	@echo "Build final OS"
 	@cat $(OUT)/boot.bin $(OUT)/kernel.bin > $(OUT)/os.bin
@@ -70,7 +70,7 @@ kernel:
 	nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernelstrap.asm.o
 
 	# Then, make the flat binary (for booting)
-	x86_64-elf-ld -m elf_i386 -Tsrc/kernel/link.ld -o ./bin/kernel.bin \
+	x86_64-elf-ld -m elf_i386 -Tlinker.ld -o ./bin/kernel.bin \
 		./bin/kernelstrap.asm.o \
 		./bin/kernel.c.o \
 		./bin/vga.c.o \
