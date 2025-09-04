@@ -19,28 +19,28 @@ LD=x86_64-elf-ld -melf_i386
 endif
 all: clean bootloader kernel os qemu
 clean:
-    @echo "Clean $(OUT)"
-    @rm -rf $(OUT)
-    @mkdir -p $(OUT)
+	@echo "Clean $(OUT)"
+	@rm -rf $(OUT)
+	@mkdir -p $(OUT)
 bootloader:
-    @echo "Build Bootloader"
-    @nasm -f bin src/boot/boot.asm -o $(OUT)/boot.bin
+	@echo "Build Bootloader"
+	@nasm -f bin src/boot/boot.asm -o $(OUT)/boot.bin
 kernel:
-    @echo "Build kernel"
-    @mkdir -p $(OUT)/kernel
-    @nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernel/kernelstrap.asm.o
-    @elfs="";\
-    for file in src/kernel/*.c;\
-    do \
-        echo "Build $$file"; \
-        $(CC) -c $(NO_SSE) $(CFLAGS) $$file -o $(OUT)/kernel/$$(basename $${file}.o) ;\
-        elfs+="$(OUT)/kernel/$$(basename $${file}.o) "; \
-    done ;  \
-    $(LD) -o $(OUT)/kernel.bin --oformat binary -T linker.ld $(OUT)/kernel/kernelstrap.asm.o $$elfs
+	@echo "Build kernel"
+	@mkdir -p $(OUT)/kernel
+	@nasm -f elf src/kernel/kernelstrap.asm -o ./bin/kernel/kernelstrap.asm.o
+	@elfs="";\
+	for file in src/kernel/*.c;\
+	do \
+	    echo "Build $$file"; \
+	    $(CC) -c $(NO_SSE) $(CFLAGS) $$file -o $(OUT)/kernel/$$(basename $${file}.o) ;\
+	    elfs+="$(OUT)/kernel/$$(basename $${file}.o) "; \
+	done ;  \
+	$(LD) -o $(OUT)/kernel.bin --oformat binary -T linker.ld $(OUT)/kernel/kernelstrap.asm.o $$elfs
 os:
-    @echo "Build final OS"
-    @cat $(OUT)/boot.bin $(OUT)/kernel.bin > $(OUT)/os.bin
-    @echo "Full image at $(OUT)/os.bin"
+	@echo "Build final OS"
+	@cat $(OUT)/boot.bin $(OUT)/kernel.bin > $(OUT)/os.bin
+	@echo "Full image at $(OUT)/os.bin"
 qemu:
-    qemu-system-i386 -drive format=raw,file=$(OUT)/os.bin \
-        -qmp unix:./qmp-sock,server,wait=off 
+	qemu-system-i386 -drive format=raw,file=$(OUT)/os.bin \
+	    -qmp unix:./qmp-sock,server,wait=off 
