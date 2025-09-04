@@ -13,7 +13,8 @@ endif
 ifeq ($(UNAME_S),Darwin)
 CFLAGS = -ffreestanding -I/opt/homebrew/Cellar/gcc/14.2.0_1/lib/gcc/current/gcc/aarch64-apple-darwin24/14/include -g -Wall -Wextra \
          -fno-exceptions -nostdlib -nostdinc -fno-stack-protector \
-         -fno-builtin-function -fno-builtin
+         -fno-builtin-function -fno-builtin \
+		 -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter
 CC=x86_64-elf-gcc -m32
 LD=x86_64-elf-ld -melf_i386
 endif
