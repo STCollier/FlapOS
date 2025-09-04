@@ -4,6 +4,8 @@
 #define PIPE_WIDTH 26
 #define PIPE_HEIGHT 100
 
+static struct Pipes PIPES[5];
+
 static const uint8_t pipe[PIPE_HEIGHT][PIPE_WIDTH] = {
     { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },
     { 8, 9, 10, 11, 12, 12, 12, 12, 12, 11, 12, 11, 10, 9, 13, 14, 14, 15, 16, 17, 18, 18, 18, 19, 19, 8 },
@@ -107,10 +109,8 @@ static const uint8_t pipe[PIPE_HEIGHT][PIPE_WIDTH] = {
     { 0, 8, 17, 16, 14, 13, 9, 11, 12, 12, 12, 22, 9, 13, 14, 16, 17, 18, 18, 19, 19, 19, 19, 19, 8, 0 }
 };
 
-static struct Pipes PIPES[5];
-
 void pipes_init() {
-    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) {
+    for (int i = 0; i < ARR_LEN(PIPES); i++) {
         PIPES[i] = (struct Pipes) {
             .x = i * 70,
             .offset = rand(i*1234) % 75
@@ -119,7 +119,7 @@ void pipes_init() {
 }
 
 void pipes_draw() {
-    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) { // num pipes
+    for (int i = 0; i < ARR_LEN(PIPES); i++) { // num pipes
         for (int j = 0; j < 2; j++) { // top and bottom
             for (int y = 0; y < PIPE_HEIGHT; y++) {
                 for (int x = 0; x < PIPE_WIDTH; x++) {
@@ -132,7 +132,7 @@ void pipes_draw() {
 
 static vec2_t PSIZE = {PIPE_WIDTH, PIPE_HEIGHT};
 void pipes_update(struct Bird* bird, uint64_t tick) {
-    for (int i = 0; i < sizeof(PIPES) / sizeof(PIPES[0]); i++) {
+    for (int i = 0; i < ARR_LEN(PIPES); i++) {
         vec2_t pt = { PIPES[i].x, -PIPES[i].offset };
         vec2_t pb = { PIPES[i].x, 180 - PIPES[i].offset };
 

@@ -143,17 +143,16 @@ static const char* IRQ_DESC[16] = {
 };
 
 typedef struct {
-   uint32_t ds; /* Data segment selector */
-   uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* Pushed by pusha. */
-   uint32_t int_no, err_code; /* Interrupt number and error code (if applicable) */
-   uint32_t eip, cs, eflags, useresp, ss; /* Pushed by the processor automatically */
+   uint32_t ds;
+   uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+   uint32_t int_no, err_code;
+   uint32_t eip, cs, eflags, useresp, ss;
 } registers_t;
 
 void isr_init();
 void isr_handler(registers_t r);
+void irq_handler(registers_t r);
 void irq_init();
-
-//void irq_handler(registers_t r);
 
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(uint8_t n, isr_t handler);

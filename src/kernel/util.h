@@ -23,6 +23,7 @@ typedef struct {
 
 #define FVEC2_ZERO (fvec2_t){0 , 0}
 #define VEC2_ZERO (vec2_t) {0, 0}
+#define ARR_LEN(arr) (int) (sizeof(PIPES) / sizeof(PIPES[0]))
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xFFFF)

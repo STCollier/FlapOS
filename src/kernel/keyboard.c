@@ -5,7 +5,7 @@
 
 struct Keyboard keyboard;
 
-static void key_callback(registers_t regs) {
+static void key_callback([[maybe_unused]] registers_t regs) {
     uint8_t scancode = inb(0x60);
 
     if (scancode & 0x80) {
@@ -20,7 +20,7 @@ static void key_callback(registers_t regs) {
 
 void keyboard_init() {
     register_interrupt_handler(IRQ1, key_callback);
-    memset(keyboard.keys, false, 64);
+    memset(keyboard.keys, false, 128);
 }
 
 bool key_pressed(enum Scancode key) {

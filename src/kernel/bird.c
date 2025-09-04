@@ -48,7 +48,7 @@ static const uint8_t upflap[12][17] = {
 }; 
 
 static bool rrcollide(vec2_t pos1, vec2_t dim1, vec2_t pos2, vec2_t dim2) {
-    return  (pos1.x + dim1.x >= pos2.x &&
+    return (pos1.x + dim1.x >= pos2.x &&
             pos1.x <= pos2.x + dim2.x &&
             pos1.y + dim1.y >= pos2.y &&
             pos1.y <= pos2.y + dim2.y);

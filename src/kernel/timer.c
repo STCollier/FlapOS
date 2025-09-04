@@ -5,7 +5,7 @@
 
 static uint64_t _tick = 0;
 
-static void timer_callback(registers_t regs) {
+static void timer_callback([[maybe_unused]] registers_t regs) {
     _tick++;
 }
 

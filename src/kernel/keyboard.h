@@ -63,11 +63,10 @@ enum Scancode {
 };
 
 struct Keyboard {
-    bool keys[64];
+    bool keys[128];
 };
 
 void keyboard_init();
 bool key_pressed(enum Scancode key);
-void keyboard_update();
 
 #endif

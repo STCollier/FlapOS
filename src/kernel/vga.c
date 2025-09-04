@@ -140,17 +140,6 @@ static const uint8_t FONT[128][8] = {
 };
 
 
-/*
-See: https://wiki.osdev.org/VGA_Hardware#Port_0x3C8
-
-To write a color, write the color index to port 0x3C8, then write 3 bytes to 0x3C9 in the order red, green, blue. 
-If you want to write multiple consecutive DAC entries, you only need to write the first entry's index to 0x3C8 then write 
-all values to 0x3C9 in the order red, green, blue, red, green, blue, and so on. 
-The accessed DAC entry will automatically increment after every three bytes written
-
-NOTE: colors are in the range [0, 63]
-*/
-
 void VGA_swap() {
     memcpy(VGA, BUFFER, VGA_SIZE);
 }
@@ -161,6 +150,8 @@ void VGA_clear() {
     }
 }
 
+// See: https://wiki.osdev.org/VGA_Hardware#Port_0x3C8
+// NOTE: colors are in the range [0, 63]
 void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b) {
     // TODO: assert impl
     // assert(idx < 256 && r < 64 && g < 64 && b < 64);
@@ -315,27 +306,30 @@ static void _kprintf_kprints(char *str) {
 
 static bool _kprintf_valist(const char *format, va_list args) {
     bool in_specifier = false;
-    for (int i = 0; *(format+i); i++) {
-        char current = *(format+i);
+    for (int i = 0; *(format + i); i++) {
+        char current = *(format + i);
         if (in_specifier) {
             switch(current) {
                 case 'c':
                    // NOTE: pass u32
                    _kprintf_kprintc((uint8_t) va_arg(args, uint32_t));
                    break;
+
                 case 's':
                     char *ptr = va_arg(args,char*);
                     _kprintf_kprints(ptr);
                     break;
+
                 case 'x':
                     char *hexval = "0123456789ABCDEF";
-                    uint32_t num  = va_arg(args,uint32_t);
+                    uint32_t num  = va_arg(args, uint32_t);
                     _kprintf_kprints("0x");
                     for (int sh = 32 / 4 - 1; sh >= 0; sh--) {
                         char let = hexval[(num >> (sh * 4)) & 0xF];
                         _kprintf_kprintc(let);
                     }
                     break;
+
                 case 'd':
                     int n = va_arg(args,int);
                     char out[20];
@@ -343,28 +337,32 @@ static bool _kprintf_valist(const char *format, va_list args) {
                     _kprintf_kprints(out);
                     break;
             }
+
             in_specifier = false;
             continue;
         }
+
         else if (current == '%') {
             in_specifier = true;
-            if (*(format + i + 1)== '\0'){
+
+            if (*(format + i + 1) == '\0'){
                 _kprintf_kprintc('%');
-                in_specifier=false;
+                in_specifier = false;
             }
+
             continue;
-        }
-        else {
+        }  else {
             _kprintf_kprintc(current);   
         }
     }
+
     return FILLED_SCREEN;
 }
 
 bool kprintf(const char* format, ...) {
     va_list args;
-    va_start(args,format);
-    bool ret = _kprintf_valist(format,args);
+    va_start(args, format);
+    bool ret = _kprintf_valist(format, args);
     va_end(args);
     return ret;
 }
@@ -391,18 +389,19 @@ void putpixel(uint8_t color, size_t x, size_t y) {
     if (x < VGA_WIDTH && y < VGA_HEIGHT && color) BUFFER[y * VGA_WIDTH + x] = color;
 }
 
-/* Begin Flappy Bird graphical functions */
 void putpixelmatrix(vec2_t begin, vec2_t size, uint8_t nowrite_byte, uint8_t *matrix) {
     uint32_t index = 0;
-    for (int y = begin.y; y < begin.y + size.y; y++) {
-        //if (y < 0) continue;
-        for (int x = begin.x;x<begin.x+size.x;x++) {
-            if (x >= VGA_WIDTH||y >= VGA_HEIGHT || x<0 || y<0){index++;continue;}
-            if (index > 10000) return;
 
-            if ( *(matrix+index) == nowrite_byte) {index++;continue;}
-            *(BUFFER+(y*VGA_WIDTH)+x) = *(matrix+index);
-            //*(matrix+y*size.x+x);
+    for (int y = begin.y; y < begin.y + size.y; y++) {
+        for (int x = begin.x; x< begin.x + size.x; x++) {
+            if (x >= VGA_WIDTH || y >= VGA_HEIGHT || x < 0 || y < 0){ index++; continue; }
+
+            if (*(matrix+index) == nowrite_byte) {
+                index++;
+                continue;
+            }
+
+            *(BUFFER + (y * VGA_WIDTH) + x) = *(matrix + index);
             index++;
         }
         
