@@ -5,42 +5,27 @@
 #include "../drivers/timer.h"
 #include "../drivers/keyboard.h"
 
+#define SCAN(...) __VA_ARGS__
+
+#define GEN_(_offset, _pfx, _i) set_idt_gate(_i + _offset, (uintptr_t) _pfx##_i)
+#define GEN(_offset, _pfx, ...) GEN_(_offset, _pfx, __VA_ARGS__) GEN2(_offset, _pfx,
+#define GEN2(_offset, _pfx, ...) GEN2_##__VA_OPT__(1)(_offset, _pfx, __VA_ARGS__)
+#define GEN2_(...) ;
+#define GEN2_1(_offset, _pfx, ...) ; GEN_(_offset, _pfx, __VA_ARGS__) GEN3(_offset, _pfx,
+#define GEN3(_offset, _pfx, ...) GEN3_##__VA_OPT__(1)(_offset, _pfx, __VA_ARGS__)
+#define GEN3_(...) ;
+#define GEN3_1(_offset, _pfx, ...) ; GEN_(_offset, _pfx, __VA_ARGS__) GEN2(_offset, _pfx,
+
+#define SEQ_ISR(_offset, _pfx) (_offset, _pfx, 0)1)2)3)4)5)6)7)8)9)10)11)12)13)14)15)16)17)18)19)20)21)22)23)24)25)26)27)28)29)30)31))
+#define SEQ_IRQ(_offset, _pfx) (_offset, _pfx, 0)1)2)3)4)5)6)7)8)9)10)11)12)13)14)15))
+
+#define ISRS_INSTALL() SCAN(GEN SEQ_ISR(0, ISR))
+#define IRQS_INSTALL() SCAN(GEN SEQ_IRQ(32, _IRQ))
+
 isr_t interrupt_handlers[256];
 
 void isr_init() {
-    // Install IDTs
-    set_idt_gate(0,  (uintptr_t) ISR0);
-    set_idt_gate(1,  (uintptr_t) ISR1);
-    set_idt_gate(2,  (uintptr_t) ISR2);
-    set_idt_gate(3,  (uintptr_t) ISR3);
-    set_idt_gate(4,  (uintptr_t) ISR4);
-    set_idt_gate(5,  (uintptr_t) ISR5);
-    set_idt_gate(6,  (uintptr_t) ISR6);
-    set_idt_gate(7,  (uintptr_t) ISR7);
-    set_idt_gate(8,  (uintptr_t) ISR8);
-    set_idt_gate(9,  (uintptr_t) ISR9);
-    set_idt_gate(10, (uintptr_t) ISR10);
-    set_idt_gate(11, (uintptr_t) ISR11);
-    set_idt_gate(12, (uintptr_t) ISR12);
-    set_idt_gate(13, (uintptr_t) ISR13);
-    set_idt_gate(14, (uintptr_t) ISR14);
-    set_idt_gate(15, (uintptr_t) ISR15);
-    set_idt_gate(16, (uintptr_t) ISR16);
-    set_idt_gate(17, (uintptr_t) ISR17);
-    set_idt_gate(18, (uintptr_t) ISR18);
-    set_idt_gate(19, (uintptr_t) ISR19);
-    set_idt_gate(20, (uintptr_t) ISR20);
-    set_idt_gate(21, (uintptr_t) ISR21);
-    set_idt_gate(22, (uintptr_t) ISR22);
-    set_idt_gate(23, (uintptr_t) ISR23);
-    set_idt_gate(24, (uintptr_t) ISR24);
-    set_idt_gate(25, (uintptr_t) ISR25);
-    set_idt_gate(26, (uintptr_t) ISR26);
-    set_idt_gate(27, (uintptr_t) ISR27);
-    set_idt_gate(28, (uintptr_t) ISR28);
-    set_idt_gate(29, (uintptr_t) ISR29);
-    set_idt_gate(30, (uintptr_t) ISR30);
-    set_idt_gate(31, (uintptr_t) ISR31);
+    ISRS_INSTALL();
 
     // Remap PIC
     outportb(PIC1, ICW1_INIT | ICW1_ICW4);
@@ -54,23 +39,7 @@ void isr_init() {
     outportb(PIC1_DATA, 0x0);
     outportb(PIC2_DATA, 0x0);
 
-    // Install the IRQs
-    set_idt_gate(32, (uintptr_t) _IRQ0);
-    set_idt_gate(33, (uintptr_t) _IRQ1);
-    set_idt_gate(34, (uintptr_t) _IRQ2);
-    set_idt_gate(35, (uintptr_t) _IRQ3);
-    set_idt_gate(36, (uintptr_t) _IRQ4); 
-    set_idt_gate(37, (uintptr_t) _IRQ5);
-    set_idt_gate(38, (uintptr_t) _IRQ6);
-    set_idt_gate(39, (uintptr_t) _IRQ7);
-    set_idt_gate(40, (uintptr_t) _IRQ8);
-    set_idt_gate(41, (uintptr_t) _IRQ9);
-    set_idt_gate(42, (uintptr_t) _IRQ10);
-    set_idt_gate(43, (uintptr_t) _IRQ11);
-    set_idt_gate(44, (uintptr_t) _IRQ12);
-    set_idt_gate(45, (uintptr_t) _IRQ13);
-    set_idt_gate(46, (uintptr_t) _IRQ14);
-    set_idt_gate(47, (uintptr_t) _IRQ15);
+    IRQS_INSTALL();
 
     set_idt();
 }  
