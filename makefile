@@ -4,14 +4,14 @@ LD=
 OUT=./bin
 NO_SSE = -mno-sse -mno-sse2 -mfpmath=387 -march=i386
 ifeq ($(UNAME_S),Linux)
-CFLAGS = -ffreestanding -I/usr/lib/gcc/i386-elf/15.1.0/include/ -Wall -Wextra -Wno-unused-function -Wno-unused-variable \
+CFLAGS = -ffreestanding -Wall -Wextra -Wno-unused-function -Wno-unused-variable \
          -fno-exceptions -nostdlib -nostdinc -fno-stack-protector \
          -fno-builtin-function -fno-builtin 
 CC=i386-elf-gcc -m32
 LD=i386-elf-ld
 endif 
 ifeq ($(UNAME_S),Darwin)
-CFLAGS = -ffreestanding -I/opt/homebrew/Cellar/gcc/14.2.0_1/lib/gcc/current/gcc/aarch64-apple-darwin24/14/include -g -Wall -Wextra \
+CFLAGS = -ffreestanding -g -Wall -Wextra \
          -fno-exceptions -nostdlib -nostdinc -fno-stack-protector \
          -fno-builtin-function -fno-builtin \
 		 -Wno-unused-function -Wno-unused-variable
