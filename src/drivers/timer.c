@@ -1,6 +1,6 @@
 #include "timer.h"
 #include "../util.h"
-#include "isr.h"
+#include "../interrupts/isr.h"
 #include "../drivers/vga.h"
 
 static uint64_t _tick = 0;
@@ -11,6 +11,8 @@ static void timer_callback([[maybe_unused]] registers_t regs) {
 
 void timer_init(uint64_t hz) {
     register_interrupt_handler(IRQ0, timer_callback);
+
+    klog("Register IRQ0 (PIT driver).");
 
     /* Get the PIT value: hardware clock at 1193180 Hz */
     uint64_t divisor = 1193180 / hz;

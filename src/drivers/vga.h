@@ -13,6 +13,7 @@ void VGA_swap();
 void VGA_clear();
 void VGA_setPalette();
 void VGA_setColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b);
+void VGA_rect(vec2_t pos, vec2_t size, uint8_t color);
 
 void kprintc(char c, size_t x, size_t y, uint8_t color);
 void kprints(const char* str, size_t x, size_t y, uint8_t color);

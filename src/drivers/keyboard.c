@@ -21,6 +21,8 @@ static void key_callback([[maybe_unused]] registers_t regs) {
 void keyboard_init() {
     register_interrupt_handler(IRQ1, key_callback);
     memset(keyboard.keys, false, 128);
+
+    klog("Register IRQ1 (Keyboard driver).");
 }
 
 bool key_pressed(enum Scancode key) {

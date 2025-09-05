@@ -112,8 +112,9 @@ static const uint8_t pipe[PIPE_HEIGHT][PIPE_WIDTH] = {
 void pipes_init() {
     for (int i = 0; i < ARR_LEN(PIPES); i++) {
         PIPES[i] = (struct Pipes) {
-            .x = i * 70,
-            .offset = rand(i*1234) % 75
+            .x = i * 70 + 300,
+            .offset = rand(i * 1234) % 75,
+            .passed = false
         };
     }
 }
@@ -131,18 +132,27 @@ void pipes_draw() {
 }
 
 static vec2_t PSIZE = {PIPE_WIDTH, PIPE_HEIGHT};
+
 void pipes_update(struct Bird* bird, uint64_t tick) {
     for (int i = 0; i < ARR_LEN(PIPES); i++) {
+        if (PIPES[i].x <= -PIPE_WIDTH && PIPES[i].x >= -PIPE_WIDTH - 5) {
+            PIPES[i].offset = rand(tick * 1234) % 75;
+            PIPES[i].x = VGA_WIDTH;
+            PIPES[i].passed = false;
+        }
+        else {
+            if (!bird->dead) PIPES[i].x -= 2;
+        }
+
         vec2_t pt = { PIPES[i].x, -PIPES[i].offset };
         vec2_t pb = { PIPES[i].x, 180 - PIPES[i].offset };
 
-        bird_checkCollision(bird, pt, PSIZE);
         bird_checkCollision(bird, pb, PSIZE);
+        bird_checkCollision(bird, pt, PSIZE);
 
-        if (PIPES[i].x >= -PIPE_WIDTH) PIPES[i].x -= 2; // loop back over screen
-        else {
-            PIPES[i].offset = rand(tick * 1234) % 75;
-            PIPES[i].x = VGA_WIDTH;
+        if (!PIPES[i].passed && bird->pos.x > PIPES[i].x + PIPE_WIDTH) {
+            bird->score++;
+            PIPES[i].passed = true;
         }
     }
 }

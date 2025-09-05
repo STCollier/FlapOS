@@ -194,6 +194,12 @@ void VGA_setPalette() {
     VGA_setColor(25, 30, 50, 50);
     VGA_setColor(26, 25, 49, 50);
     VGA_setColor(27, 20, 48, 50);
+
+    VGA_setColor(247, 30, 30, 30); // another shade of gray
+    VGA_setColor(248, 15, 15, 15); // dark gray
+
+    VGA_setColor(249, 63, 10, 10);
+    VGA_setColor(250, 50, 10, 10);
     
     VGA_setColor(251, 63, 52, 30); // dark yellow
     VGA_setColor(252, 63, 47, 20); // light yellow
@@ -387,6 +393,14 @@ bool klog(const char* format, ...) {
 
 void putpixel(uint8_t color, size_t x, size_t y) {
     if (x < VGA_WIDTH && y < VGA_HEIGHT && color) BUFFER[y * VGA_WIDTH + x] = color;
+}
+
+void VGA_rect(vec2_t pos, vec2_t size, uint8_t color) {
+    for (int x = pos.x; x < pos.x + size.x; x++) {
+        for (int y = pos.y; y < pos.y + size.y; y++) {
+            putpixel(color, x, y);
+        }
+    }
 }
 
 void putpixelmatrix(vec2_t begin, vec2_t size, uint8_t nowrite_byte, uint8_t *matrix) {

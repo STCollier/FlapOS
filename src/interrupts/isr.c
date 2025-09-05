@@ -2,7 +2,7 @@
 #include "../util.h"
 #include "../drivers/vga.h"
 #include "idt.h"
-#include "timer.h"
+#include "../drivers/timer.h"
 #include "../drivers/keyboard.h"
 
 isr_t interrupt_handlers[256];

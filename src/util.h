@@ -21,8 +21,8 @@ typedef struct {
     float x,y;
 } fvec2_t;
 
-#define FVEC2_ZERO (fvec2_t){0 , 0}
-#define VEC2_ZERO (vec2_t) {0, 0}
+#define FVEC2_ZERO (fvec2_t) {0, 0}
+#define VEC2_ZERO  (vec2_t)  {0, 0}
 #define ARR_LEN(arr) (int) (sizeof(PIPES) / sizeof(PIPES[0]))
 
 #define low_16(address) (uint16_t)((address) & 0xFFFF)
@@ -134,5 +134,12 @@ static inline uint32_t rand(uint32_t seed) {
     x = y; y = z; z = w;
     return w = w ^ (w >> 19) ^ t ^ (t >> 8);
 };
+
+static inline bool rrcollide(vec2_t pos1, vec2_t dim1, vec2_t pos2, vec2_t dim2) {
+    return (pos1.x + dim1.x >= pos2.x &&
+            pos1.x <= pos2.x + dim2.x &&
+            pos1.y + dim1.y >= pos2.y &&
+            pos1.y <= pos2.y + dim2.y);
+}
 
 #endif

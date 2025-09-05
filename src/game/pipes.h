@@ -7,6 +7,7 @@
 struct Pipes {
     int x;
     int offset;
+    bool passed;
 };
 
 void pipes_init();
